@@ -1,6 +1,7 @@
-import "./Home.css"
+import Link from 'next/link';
+import "./Signin.css"
 
-export default function Home() {
+export default function Signin() {
   return (
     <div className="row">
       <div className="col-md-4 offset-md-4">
@@ -19,7 +20,7 @@ export default function Home() {
                 />
               </div>
               <div className="form-group mt-4 mb-5">
-                <label htmlFor="password" className="form-label">Clave</label>
+                <label htmlFor="password" className="form-label">Contrseña</label>
                 <input
                   type="password"
                   name="password"
@@ -29,9 +30,16 @@ export default function Home() {
                 />
               </div>
               <div className="d-grid gap-2">
-                <button className="btn btn-primary mt-4" type="submit">
+                {/* <button className="btn btn-primary mt-4" type="submit" >
                   INICIAR SESIÓN
-                </button>
+                </button> */}
+
+                <Link href="/home" passHref>
+                  <button className="btn btn-primary mt-4" type="button">
+                    INICIAR SESIÓN
+                  </button>
+                </Link>
+
               </div>
             </form>
           </div>
