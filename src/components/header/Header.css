@@ -1,0 +1,16 @@
+.header-main h1 {
+  font-size: 32px;
+}
+
+.header-main p {
+  font-size: 15px;
+}
+
+.header-main span {
+  font-size: 15px;
+}
+/* 
+.header-main .logo {
+  width: 90px !important;
+  height: 70px !important;
+} */
