@@ -19,6 +19,10 @@ App web que permite
 ## installation
 - npm install
 
+## Technologies
+- next 15
+- Bootstrap 5
+
 ## Support 
 Gmmail [waldirmendozahuaman887@gmail.com](waldirmendozahuaman887@gmail.com) 
 Whatsapp [+51 979326277]
