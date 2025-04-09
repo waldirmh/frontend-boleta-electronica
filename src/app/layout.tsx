@@ -7,6 +7,7 @@ import "@/styles/globals.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Footer from "@/components/footer/Footer"
 import Header from "@/components/header/Header"
+import { AuthProvider } from "@/context/authContext";
 
 
 const inter = Inter({
@@ -29,9 +30,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={inter.className}>
         <div className="app d-flex flex-column">
           <Header />
-          <main className="container">
-            {children}
-          </main>
+          <AuthProvider>
+            <main className="container">
+              {children}
+            </main>
+          </AuthProvider>
+
           <Footer />
         </div>
 

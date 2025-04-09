@@ -91,3 +91,6 @@
   border: none;
   outline: none;
 }
+.txt-register:hover {
+  color: orangered !important;
+}

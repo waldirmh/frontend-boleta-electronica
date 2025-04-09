@@ -20,7 +20,7 @@ export default function Signin() {
                 />
               </div>
               <div className="form-group mt-4 mb-5">
-                <label htmlFor="password" className="form-label">Contrseña</label>
+                <label htmlFor="password" className="form-label">Contraseña</label>
                 <input
                   type="password"
                   name="password"
@@ -30,16 +30,20 @@ export default function Signin() {
                 />
               </div>
               <div className="d-grid gap-2">
-                {/* <button className="btn btn-primary mt-4" type="submit" >
+                <button className="btn btn-primary mt-4" type="submit" >
                   INICIAR SESIÓN
-                </button> */}
+                </button>
 
-                <Link href="/home" passHref>
+                {/* <Link href="/home" passHref>
                   <button className="btn btn-primary mt-4" type="button">
                     INICIAR SESIÓN
                   </button>
-                </Link>
+                </Link> */}
 
+              </div>
+              <div className='mt-3 fs-6 '>
+                <Link href={"/register"} className="text-light txt-register">
+                  Registrarse</Link>
               </div>
             </form>
           </div>
