@@ -36,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <main className="container">
               {children}
             </main>
-            <ToastContainer />
+            <ToastContainer position="top-center" autoClose={5000} />
           </AuthProvider>
           <Footer />
         </div>
