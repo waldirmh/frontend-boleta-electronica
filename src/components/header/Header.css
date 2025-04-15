@@ -1,16 +1,25 @@
-.header-main h1 {
-  font-size: 32px;
+@media (max-width: 767px) {
+  .title {
+    font-size: 20px;
+  }
+  .p1 {
+    font-size: 12px;
+  }
+  .info {
+    display: flex;
+    gap: 10px;
+  }
+  .txt-info {
+    border-right: solid white 1px;
+    padding-right: 12px;
+    margin-bottom: 3px;
+  }
 }
-
-.header-main p {
-  font-size: 15px;
+@media (min-width: 768px) {
+  .title {
+    font-size: 30px;
+  }
+  .p {
+    font-size: 17;
+  }
 }
-
-.header-main span {
-  font-size: 15px;
-}
-/* 
-.header-main .logo {
-  width: 90px !important;
-  height: 70px !important;
-} */

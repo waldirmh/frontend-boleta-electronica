@@ -1,11 +1,10 @@
 import Link from 'next/link';
-// import "./Signin.css"
 import "../styles/Signin.css"
 
 export default function Signin() {
   return (
-    <div className="row">
-      <div className="col-md-4 offset-md-4">
+    <div className="row align-items-center justify-content-center">
+      <div className="col-12 col-md-10 col-lg-4">
         <div className="mt-4 text-center">
           <div className="signin-title">INGRESAR</div>
           <div className="card-body">
@@ -34,13 +33,6 @@ export default function Signin() {
                 <button className="btn btn-primary mt-4" type="submit" >
                   INICIAR SESIÓN
                 </button>
-
-                {/* <Link href="/home" passHref>
-                  <button className="btn btn-primary mt-4" type="button">
-                    INICIAR SESIÓN
-                  </button>
-                </Link> */}
-
               </div>
               <div className='mt-3 fs-6 '>
                 <Link href={"/register"} className="text-light txt-register">
