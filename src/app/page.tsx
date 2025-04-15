@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import "./Signin.css"
+// import "./Signin.css"
+import "../styles/Signin.css"
 
 export default function Signin() {
   return (

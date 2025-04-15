@@ -3,12 +3,18 @@
 import Link from "next/link";
 import "./Register.css";
 import { useAuth } from "@/context/authContext";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { UserRegisterDTO } from "@/interface/auth-interface";
+import { LoadingOutlined } from '@ant-design/icons';
+import { Spin } from 'antd';
+import { useRouter } from "next/navigation";
+import { toast } from 'react-toastify'
+
 
 export default function Register() {
-  const { signup } = useAuth();
-
+  const { signup, errors } = useAuth();
+  const router = useRouter()
+  const [loading, setLoading] = useState<boolean>(false)
   const [formData, setFormData] = useState<UserRegisterDTO>({
     email: "",
     username: "",
@@ -17,13 +23,35 @@ export default function Register() {
   });
 
   const handleRegister = async () => {
+    setLoading(true)
     const userData = {
       ...formData,
       role: formData.role || "USER"
     };
-    const response = await signup(userData);
-    console.log(">response:", response);
+    try {
+      const response = await signup(userData);
+      if (response && response.status === 201) {
+        toast.success("Usuario Registrado")
+        router.push("/")
+      }
+    } catch (error: any) {
+      const message = error.response?.data.error.message
+      console.log("> message error signup:", message);
+    }
+    finally {
+      setLoading(false)
+    }
+
   };
+  useEffect(() => {
+    if (errors.length > 0) {
+      errors.forEach(err => {
+        toast.error(err);
+      });
+    }
+  }, [errors]);
+
+
 
   return (
     <div className="row">
@@ -74,9 +102,15 @@ export default function Register() {
               />
             </div>
             <div className="d-grid gap-2">
-              <button className="btn btn-primary mt-4" onClick={handleRegister}>
-                REGISTRAR
+              <button
+                className="btn btn-primary mt-4 d-flex justify-content-center align-items-center gap-2"
+                onClick={handleRegister}
+                disabled={loading}
+              >
+                {loading && <Spin indicator={<LoadingOutlined style={{ fontSize: 18, color: "white" }} spin />} />}
+                {loading ? "Registrando..." : "REGISTRAR"}
               </button>
+
             </div>
             <div className="mt-3 fs-6">
               <Link href="/" className="text-light txt-iniciar-sesion">
