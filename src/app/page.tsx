@@ -5,8 +5,8 @@ export default function Signin() {
   return (
     <div className="row align-items-center justify-content-center">
       <div className="col-12 col-md-10 col-lg-4">
-        <div className="mt-4 text-center">
-          <div className="signin-title">INGRESAR</div>
+        <div className="mt-2 mt-md-4 text-center">
+          <div className="signin-title mb-1 mb-md-3">INGRESAR</div>
           <div className="card-body">
             <form action="/signin" method="POST">
               <div className="form-group">
@@ -19,7 +19,7 @@ export default function Signin() {
                   className="form-control"
                 />
               </div>
-              <div className="form-group mt-4 mb-5">
+              <div className="form-group mt-3 mt-md-4 mb-3 mb-md-5">
                 <label htmlFor="password" className="form-label">Contraseña</label>
                 <input
                   type="password"
@@ -30,7 +30,7 @@ export default function Signin() {
                 />
               </div>
               <div className="d-grid gap-2">
-                <button className="btn btn-primary mt-4" type="submit" >
+                <button className="btn btn-primary mt-4 mt-md-5" type="submit" >
                   INICIAR SESIÓN
                 </button>
               </div>
