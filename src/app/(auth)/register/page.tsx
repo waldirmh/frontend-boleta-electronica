@@ -46,7 +46,7 @@ export default function Register() {
   useEffect(() => {
     if (errors.length > 0) {
       errors.forEach(err => {
-        toast.error(err);
+        toast.info(err);
       });
     }
   }, [errors]);

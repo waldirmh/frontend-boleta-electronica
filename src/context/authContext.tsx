@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } catch (error: any) {
             const message = error.response?.data.error.message || "Error al registrarse"
             setErrors([message]);
-            toast.info(message)
+            // toast.info(message)
         }
     };
 
