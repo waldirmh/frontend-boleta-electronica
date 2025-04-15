@@ -44,7 +44,7 @@ export default function Footer() {
             <Image className="img img-fluid custom-img-size" src={imageIsuzu} alt="logo isuzu" width={50} height={50} />
           </li>
         </ul>
-        <p className="text-end text-light w-100">
+        <p className="text-end text-light w-100 txt">
           2025 &copy; Todos los Derechos Reservados
         </p>
       </div>

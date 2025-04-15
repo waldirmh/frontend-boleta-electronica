@@ -4,7 +4,7 @@ import "../styles/Signin.css"
 export default function Signin() {
   return (
     <div className="row align-items-center justify-content-center">
-      <div className="col-12 col-md-10 col-lg-4">
+      <div className="col-12 col-md-10 col-lg-10">
         <div className="mt-2 mt-md-4 text-center">
           <div className="signin-title mb-1 mb-md-3">INGRESAR</div>
           <div className="card-body">
@@ -19,7 +19,7 @@ export default function Signin() {
                   className="form-control"
                 />
               </div>
-              <div className="form-group mt-3 mt-md-4 mb-3 mb-md-5">
+              <div className="form-group mt-4 mt-md-4 mb-3 mb-md-5">
                 <label htmlFor="password" className="form-label">Contraseña</label>
                 <input
                   type="password"
@@ -34,7 +34,7 @@ export default function Signin() {
                   INICIAR SESIÓN
                 </button>
               </div>
-              <div className='mt-3 fs-6 '>
+              <div className='mt-4 fs-6 '>
                 <Link href={"/register"} className="text-light txt-register">
                   Registrarse</Link>
               </div>

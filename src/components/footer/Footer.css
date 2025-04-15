@@ -1,3 +1,13 @@
 .img-fluid {
   background: none;
 }
+@media (max-width: 767px) {
+  .txt {
+    font-size: 12px;
+  }
+}
+@media (min-width: 768px) {
+  .txt {
+    font-size: 18px;
+  }
+}

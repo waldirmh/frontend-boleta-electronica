@@ -52,12 +52,11 @@ export default function Register() {
   }, [errors]);
 
 
-
   return (
-    <div className="row">
-      <div className="col-md-4 offset-md-4">
-        <div className="mt-4 text-center">
-          <div className="signin-title">REGISTRAR</div>
+    <div className="row align-items-center justify-content-center">
+      <div className="col-12 col-md-0 col-lg-10">
+        <div className="mt-1 mt-md-4 text-center">
+          <div className="register-title mb-0 mb-md-3">REGISTRAR</div>
           <div className="card-body">
             <div className="form-group">
               <label htmlFor="email" className="form-label">
@@ -73,7 +72,7 @@ export default function Register() {
                 className="form-control"
               />
             </div>
-            <div className="form-group">
+            <div className="form-group mt-4 mt-md-4 mb-3 mb-md-4">
               <label htmlFor="username" className="form-label">
                 Usuario
               </label>
@@ -87,7 +86,7 @@ export default function Register() {
                 className="form-control"
               />
             </div>
-            <div className="form-group mt-4 mb-5">
+            <div className="form-group mt-4 mb-3 mb-md-5" >
               <label htmlFor="password" className="form-label">
                 Contraseña
               </label>
