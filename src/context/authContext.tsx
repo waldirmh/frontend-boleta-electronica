@@ -40,7 +40,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } catch (error: any) {
             const message = error.response?.data?.error?.message
             setErrors([message]);
-            // toast.info(message)
+            console.log("> error toast :", message);
+            console.log("> sign up :",error);
         }
     };
 
