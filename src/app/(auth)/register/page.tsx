@@ -43,6 +43,7 @@ export default function Register() {
     }
 
   };
+  
   useEffect(() => {
     if (errors.length > 0) {
       errors.forEach(err => {
@@ -54,7 +55,7 @@ export default function Register() {
 
   return (
     <div className="row align-items-center justify-content-center">
-      <div className="col-12 col-md-0 col-lg-10">
+      <div className="col-12 col-sm-10 col-md-6 col-lg-5">
         <div className="mt-1 mt-md-4 text-center">
           <div className="register-title mb-0 mb-md-3">REGISTRAR</div>
           <div className="card-body">

@@ -18,6 +18,7 @@ export interface UserRegisterDTO {
 export interface AuthContextType {
   user: User | null;
   signup: (data: UserRegisterDTO) => Promise<any>;
+  signin: (data: UserLoginDTO) => Promise<any>;
   isAuthenticated: boolean;
   errors: string[];
   loading: boolean;

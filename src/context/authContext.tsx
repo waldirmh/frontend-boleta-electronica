@@ -3,8 +3,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode, } from 'react';
 import { loginRequest, registerRequest } from '@/api/auth';
 import { useRouter } from 'next/navigation';
-
-import { toast } from 'react-toastify'
 import {
     AuthContextType, UserLoginDTO, UserRegisterDTO, User,
 } from '@/interface/auth-interface';
@@ -40,10 +38,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } catch (error: any) {
             const message = error.response?.data?.error?.message
             setErrors([message]);
-            console.log("> error toast :", message);
-            console.log("> sign up :",error);
+            console.log("> Error sign up :", error);
         }
     };
+
+    const signin = async (user: UserLoginDTO) => {
+        try {
+            const res = await loginRequest(user)
+            if (res && res.status === 200) {
+                const { user, token } = res.data
+                localStorage.setItem("token", token)
+                setUser(user)
+                setIsAuthenticated(true);
+                return res
+            }
+        } catch (error: any) {
+            const message = error.response?.data?.error?.message
+            setErrors([message]);
+            console.log("> Error sign in :", error);
+        }
+    }
+
+    useEffect(() => {
+        const token = localStorage.getItem('token')
+        if (token) {
+            setIsAuthenticated(true)
+        }
+        setLoading(false)
+    }, [])
 
     useEffect(() => {
         if (errors.length > 0) {
@@ -59,6 +81,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             value={{
                 user,
                 signup,
+                signin,
                 isAuthenticated,
                 errors,
                 loading,
