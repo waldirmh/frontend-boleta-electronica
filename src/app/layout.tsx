@@ -1,12 +1,12 @@
 // 'use client'
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import React from "react";
 import { ToastContainer } from 'react-toastify';
 import BootstrapClient from '@/components/bootstrap/BootstrapClient';
 import "react-toastify/dist/ReactToastify.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./globals.css"
+import React from "react";
 import Footer from "@/components/footer/Footer"
 import Header from "@/components/header/Header"
 import { AuthProvider } from "@/context/authContext";

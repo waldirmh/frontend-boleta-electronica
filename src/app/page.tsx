@@ -11,11 +11,9 @@ import "../styles/Signin.css"
 
 export default function Signin() {
 
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const { signin, errors, isAuthenticated } = useAuth();
+  const { signin, errors, loading, isAuthenticated } = useAuth();
   const router = useRouter();
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loadingSpinner, setLoadingSpinner] = useState<boolean>(false)
   const [formData, setFormData] = useState<UserLoginDTO>({
     email: "",
     password: "",
@@ -23,7 +21,7 @@ export default function Signin() {
 
 
   const handleLogin = async () => {
-    setLoading(true)
+    setLoadingSpinner(true)
     try {
       const response = await signin(formData);
       if (response?.status === 200) {
@@ -34,7 +32,7 @@ export default function Signin() {
       console.log("> message error signup:", message);
     }
     finally {
-      setLoading(false)
+      setLoadingSpinner(false)
     }
 
   };
@@ -46,6 +44,12 @@ export default function Signin() {
       });
     }
   }, [errors]);
+
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      router.push("/home");
+    }
+  }, [loading, isAuthenticated, router]);
 
   return (
     <div className="row align-items-center justify-content-center">
@@ -81,10 +85,10 @@ export default function Signin() {
               <button
                 className="btn btn-primary mt-4 d-flex justify-content-center align-items-center gap-2"
                 onClick={handleLogin}
-                disabled={loading}
+                disabled={loadingSpinner}
               >
-                {loading && <Spin indicator={<LoadingOutlined style={{ fontSize: 18, color: "white" }} spin />} />}
-                {loading ? "INICIANDO SESIÓN..." : "INICIAR SESIÓN"}
+                {loadingSpinner && <Spin indicator={<LoadingOutlined style={{ fontSize: 18, color: "white" }} spin />} />}
+                {loadingSpinner ? "INICIANDO SESIÓN..." : "INICIAR SESIÓN"}
               </button>
             </div>
             <div className='mt-4 fs-6 '>

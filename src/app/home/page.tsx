@@ -1,20 +1,32 @@
+'use client'
 import Link from 'next/link';
 import Image from 'next/image';
 import './Home.css';
-
 import imageVenta from '@/assets/img/payment.png';
 import imageReporte from '@/assets/img/clock.png';
+import { useAuth } from "@/context/authContext";
 
 export default function Home() {
+
+
+    const { logout, errors } = useAuth();
+
+    const handleLogout = async () => {
+        await logout()
+    }
+
     return (
         <div>
             <div
-                className="exit d-flex justify-content-center align-items-center mt-2"
-                style={{ width: '80px', height: '40px', border: '1px solid red' }}
+                className="d-flex justify-content-start align-items-center mt-2"
             >
-                <Link href="/" className="text-decoration-none text-danger" style={{ display: 'block' }}>
+                <button
+                    onClick={handleLogout}
+                    className="btn btn-outline-danger"
+                    >
                     SALIR
-                </Link>
+                </button>
+
             </div>
 
             <div className="container-home">

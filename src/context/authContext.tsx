@@ -4,9 +4,9 @@ import { createContext, useContext, useEffect, useState, ReactNode, } from 'reac
 import { loginRequest, registerRequest } from '@/api/auth';
 import { useRouter } from 'next/navigation';
 import {
-    AuthContextType, UserLoginDTO, UserRegisterDTO, User,
+    AuthContextType, UserLoginDTO, UserRegisterDTO, User, JwtPayload
 } from '@/interface/auth-interface';
-
+import { jwtDecode } from 'jwt-decode';
 // Inicialización del contexto
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -59,6 +59,46 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     }
 
+    const logout = async () => {
+        localStorage.removeItem('token');
+        setUser(null);
+        setIsAuthenticated(false);
+        router.push('/');
+    };
+
+    // Verifica si el token está expirado
+    const checkToken = () => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const decoded = jwtDecode<JwtPayload>(token);
+                const isExpired = decoded.exp * 1000 < Date.now();
+                if (isExpired) {
+                    console.log('Token expirado. Cerrando sesión...');
+                    logout();
+                } else {
+                    setUser({
+                        _id: decoded._id,
+                        email: decoded.email,
+                        role: decoded.role,
+                    });
+                    setIsAuthenticated(true);
+                }
+            } catch (err) {
+                console.log('Token inválido. Cerrando sesión...');
+                logout();
+            }
+        } else {
+            logout();
+        }
+        setLoading(false);
+    };
+
+    useEffect(() => {
+        checkToken();
+    }, []);
+
+
     useEffect(() => {
         const token = localStorage.getItem('token')
         if (token) {
@@ -82,6 +122,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 user,
                 signup,
                 signin,
+                logout,
                 isAuthenticated,
                 errors,
                 loading,
