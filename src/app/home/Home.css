@@ -28,12 +28,35 @@
   text-decoration: none;
   color: #000000;
 }
-
-.card-home span {
-  font-style: normal;
+.t1 {
   font-weight: 400;
   font-size: 18px;
   line-height: 26px;
   letter-spacing: 0.18em;
   margin-top: 20px;
+}
+
+@media (max-width: 767px) {
+  .card-home {
+    width: 190px;
+    height: 190px;
+  }
+  .img-ventas,
+  .img-reportes {
+    width: 100px;
+    height: 90px;
+  }
+  .container-home {
+    gap: 20px;
+  }
+  .t1 {
+    font-size: 19px !important;
+    font-weight: bold !important;
+  }
+}
+@media (min-width: 768px) {
+  .t1 {
+    font-size: 25px !important;
+    font-weight: bold !important;
+  }
 }
