@@ -51,6 +51,20 @@ export default function Signin() {
     }
   }, [loading, isAuthenticated, router]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        handleLogin();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [formData]);
+
+
   return (
     <div className="row align-items-center justify-content-center">
       <div className="col-12 col-sm-10 col-md-6 col-lg-5">

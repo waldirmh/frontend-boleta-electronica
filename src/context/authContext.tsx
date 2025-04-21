@@ -31,7 +31,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
             const res = await registerRequest(user);
             if (res && res.status === 201) {
-                setUser(res.data.user);
+                const { user, token } = res.data
+                localStorage.setItem("token", token)
+                setUser(user);
                 setIsAuthenticated(true);
                 return res;
             }

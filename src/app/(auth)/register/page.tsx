@@ -43,7 +43,7 @@ export default function Register() {
     }
 
   };
-  
+
   useEffect(() => {
     if (errors.length > 0) {
       errors.forEach(err => {
@@ -51,6 +51,19 @@ export default function Register() {
       });
     }
   }, [errors]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        handleRegister();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [formData]); 
 
 
   return (

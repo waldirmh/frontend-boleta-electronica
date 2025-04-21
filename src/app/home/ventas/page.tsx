@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Invoice, Item } from "@/interface/invoice-interface";
 import { InvoiceService } from '@/services/invoice';
+import { createInvoiceRequest } from "@/api/invoice";
 
 export default function Ventas() {
 
@@ -13,8 +14,6 @@ export default function Ventas() {
     const [invoiceData, setInvoiceData] = useState<Invoice>(invoiceService.getEmptyInvoice());
     const [itemList, setItemList] = useState<Item[]>([]);
     const [itemInvoice, setItemInvoice] = useState<Omit<Item, "id">>(invoiceService.getEmptyItem());
-
-
     const total = invoiceService.calculateTotal(itemList);
 
     const handleCreateInvoice = (e: React.FormEvent) => {
@@ -24,7 +23,8 @@ export default function Ventas() {
                 ...invoiceData,
                 items: itemList
             };
-            invoiceService.setInvoice(invoice);
+            const response = createInvoiceRequest(invoice)
+            invoiceService.saveInvoice(invoice);
         } catch (err) {
             console.error("Error al guardar:", err);
         }
@@ -35,23 +35,24 @@ export default function Ventas() {
         const newItem = invoiceService.createItem(itemInvoice);
         const updatedItems = [...itemList, newItem];
         setItemList(updatedItems);
-        setItemInvoice({ quantity: '', price: '', description: '', valuetotal: '' });
+        setItemInvoice(invoiceService.getEmptyItem());
         const updatedInvoice: Invoice = { ...invoiceData, items: updatedItems };
-        invoiceService.setInvoice(updatedInvoice);
+        invoiceService.saveInvoice(updatedInvoice);
     };
 
-    const handleDelete = (id: string) => {
+    const handleDeleteItem = (id: string) => {
         const updatedItems = itemList.filter((item) => item.id !== id);
         setItemList(updatedItems);
         const updatedInvoice: Invoice = { ...invoiceData, items: updatedItems };
         setInvoiceData(updatedInvoice);
-        invoiceService.setInvoice(updatedInvoice);
+        invoiceService.saveInvoice(updatedInvoice);
     };
 
     const cancelInvoice = () => {
         setItemList([]);
         setInvoiceData(invoiceService.getEmptyInvoice());
         invoiceService.deletedInvoice()
+        router.push("/home")
     };
 
     useEffect(() => {
@@ -174,7 +175,7 @@ export default function Ventas() {
                                         <td>S/ {Number(item.valuetotal).toFixed(2)}</td>
                                         <td className="text-center">
                                             <button
-                                                onClick={() => handleDelete(item.id)}
+                                                onClick={() => handleDeleteItem(item.id)}
                                                 className="btn btn-second button-small"
                                             >
                                                 <i className="bi bi-trash"></i>
