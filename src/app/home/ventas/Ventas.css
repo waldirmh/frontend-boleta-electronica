@@ -5,7 +5,9 @@
   box-shadow: 0px 3px 20px #000000;
   padding: 10px;
 }
-
+.btn {
+  border-radius: 0px !important;
+}
 .input-form {
   height: 40px;
   width: 100%;
@@ -18,4 +20,33 @@
 .input-form:focus {
   border: none;
   outline: none;
+}
+.table-scroll {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead,
+.table tfoot {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.table tbody {
+  display: block;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.t-body tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+.table-footer {
+  position: sticky;
+  bottom: 0;
+  background-color: white;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }

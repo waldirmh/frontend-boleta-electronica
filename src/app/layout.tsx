@@ -5,6 +5,7 @@ import { ToastContainer } from 'react-toastify';
 import BootstrapClient from '@/components/bootstrap/BootstrapClient';
 import "react-toastify/dist/ReactToastify.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import "./globals.css"
 import React from "react";
 import Footer from "@/components/footer/Footer"
