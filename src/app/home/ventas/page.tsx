@@ -3,40 +3,28 @@ import "./Ventas.css";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Invoice, Item } from "@/interface/invoice-interface";
+import { InvoiceService } from '@/services/invoice';
 
 export default function Ventas() {
+
     const router = useRouter();
+    const invoiceService = new InvoiceService();
 
-    const [invoiceData, setInvoiceData] = useState<Invoice>({
-        number: '',
-        phone: '',
-        validate: '',
-        date: "",
-        client: '',
-        address: '',
-        items: []
-    });
+    const [invoiceData, setInvoiceData] = useState<Invoice>(invoiceService.getEmptyInvoice());
+    const [itemList, setItemList] = useState<Item[]>([]);
+    const [itemInvoice, setItemInvoice] = useState<Omit<Item, "id">>(invoiceService.getEmptyItem());
 
-    const [detailsList, setDetailsList] = useState<Item[]>([]);
-    const [itemDetail, setItemDetail] = useState<Omit<Item, "id">>({
-        quantity: "",
-        price: "",
-        description: '',
-        valuetotal: ""
-    });
 
-    const total = detailsList.reduce((acc, item) => acc + Number(item.valuetotal), 0);
+    const total = invoiceService.calculateTotal(itemList);
 
     const handleCreateInvoice = (e: React.FormEvent) => {
         e.preventDefault();
         try {
             const invoice: Invoice = {
                 ...invoiceData,
-                items: detailsList
+                items: itemList
             };
-            console.log("Factura creada:", invoice);
-            localStorage.setItem("invoice", JSON.stringify(invoice));
-
+            invoiceService.setInvoice(invoice);
         } catch (err) {
             console.error("Error al guardar:", err);
         }
@@ -44,58 +32,36 @@ export default function Ventas() {
 
     const handleAddItem = (e: React.FormEvent) => {
         e.preventDefault();
-        const valuetotal = (Number(itemDetail.quantity.trim()) * Number(itemDetail.price.trim())).toFixed(2);
-        const newItem: Item = {
-            ...itemDetail,
-            valuetotal,
-            id: crypto.randomUUID(),
-        };
-        const updatedDetailsList = [...detailsList, newItem];
-
-        setDetailsList(updatedDetailsList);
-        setItemDetail({ quantity: "", price: "", description: '', valuetotal: "" });
-
-        const updatedInvoice: Invoice = {
-            ...invoiceData,
-            items: updatedDetailsList,
-        };
-
-        localStorage.setItem("invoice", JSON.stringify(updatedInvoice));
+        const newItem = invoiceService.createItem(itemInvoice);
+        const updatedItems = [...itemList, newItem];
+        setItemList(updatedItems);
+        setItemInvoice({ quantity: '', price: '', description: '', valuetotal: '' });
+        const updatedInvoice: Invoice = { ...invoiceData, items: updatedItems };
+        invoiceService.setInvoice(updatedInvoice);
     };
 
-
     const handleDelete = (id: string) => {
-        const updatedListItem = detailsList.filter(item => item.id !== id)
-        setDetailsList(updatedListItem);
-        const updatedInvoice: Invoice = {
-            ...invoiceData,
-            items: updatedListItem
-        }
-        setInvoiceData(updatedInvoice)
-        localStorage.setItem("invoice", JSON.stringify(updatedInvoice))
+        const updatedItems = itemList.filter((item) => item.id !== id);
+        setItemList(updatedItems);
+        const updatedInvoice: Invoice = { ...invoiceData, items: updatedItems };
+        setInvoiceData(updatedInvoice);
+        invoiceService.setInvoice(updatedInvoice);
     };
 
     const cancelInvoice = () => {
-        setDetailsList([]);
-        setInvoiceData({
-            number: '',
-            phone: '',
-            validate: '',
-            date: '',
-            client: '',
-            address: '',
-            items: []
-        });
+        setItemList([]);
+        setInvoiceData(invoiceService.getEmptyInvoice());
+        invoiceService.deletedInvoice()
     };
 
     useEffect(() => {
-        const storageInvoice = localStorage.getItem("invoice")
+        const storageInvoice = invoiceService.getInvoice();
         if (storageInvoice) {
-            const parsedInvoice: Invoice = JSON.parse(storageInvoice)
-            setInvoiceData(parsedInvoice)
-            setDetailsList(parsedInvoice.items)
+            setInvoiceData(storageInvoice);
+            setItemList(storageInvoice.items);
         }
-    }, [])
+    }, []);
+
     return (
         <div className="container mb-3">
             <div className="card-home-venta">
@@ -107,6 +73,7 @@ export default function Ventas() {
                             placeholder="TELEFONO"
                             value={invoiceData.phone}
                             onChange={(e) => setInvoiceData({ ...invoiceData, phone: e.target.value })}
+                            required
                         />
                     </div>
                     <div className="col-md-4">
@@ -162,23 +129,23 @@ export default function Ventas() {
                             className="form-control input-form"
                             type="number"
                             placeholder="Cantidad"
-                            value={itemDetail.quantity}
-                            onChange={(e) => setItemDetail({ ...itemDetail, quantity: e.target.value })}
+                            value={itemInvoice.quantity}
+                            onChange={(e) => setItemInvoice({ ...itemInvoice, quantity: e.target.value })}
                             required
                         />
                         <input
                             className="form-control input-form"
                             type="number"
                             placeholder="Precio"
-                            value={itemDetail.price}
-                            onChange={(e) => setItemDetail({ ...itemDetail, price: e.target.value })}
+                            value={itemInvoice.price}
+                            onChange={(e) => setItemInvoice({ ...itemInvoice, price: e.target.value })}
                             required
                         />
                         <textarea
                             className="form-control input-form h-25"
                             placeholder="Descripción"
-                            value={itemDetail.description}
-                            onChange={(e) => setItemDetail({ ...itemDetail, description: e.target.value })}
+                            value={itemInvoice.description}
+                            onChange={(e) => setItemInvoice({ ...itemInvoice, description: e.target.value })}
                             required
                         />
                         <button className="btn btn-danger clock w-100 mt-2" onClick={handleAddItem}>
@@ -199,7 +166,7 @@ export default function Ventas() {
                                 </tr>
                             </thead>
                             <tbody className="t-body">
-                                {detailsList.map((item) => (
+                                {itemList.map((item) => (
                                     <tr key={item.id}>
                                         <td className="text-center">{item.quantity}</td>
                                         <td>{item.description}</td>
