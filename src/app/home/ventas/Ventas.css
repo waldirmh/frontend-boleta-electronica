@@ -4,6 +4,7 @@
   background: rgba(239, 239, 239, 0.6);
   box-shadow: 0px 3px 20px #000000;
   padding: 10px;
+  overflow-x: auto;
 }
 .btn {
   border-radius: 0px !important;
@@ -21,14 +22,15 @@
   border: none;
   outline: none;
 }
-.table-scroll {
-  width: 100%;
-  border-collapse: collapse;
-}
+
 .number {
   font-size: 22px;
   font-weight: 500;
   color: green !important;
+}
+.table {
+  min-width: 600px;
+  margin-bottom: 2px;
 }
 .table thead,
 .table tfoot {
@@ -54,3 +56,37 @@
   background-color: white;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
+.btn-deleted {
+  padding: 0px;
+  max-height: 25px;
+}
+.icon-deleted {
+  color: black;
+  font-size: 18px;
+  border: none;
+}
+
+.btn-deleted:active {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+}
+.icon-deleted:hover {
+  color: red;
+  font-size: 20px;
+  border: none;
+}
+
+/* .btn-deleted:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
+} */
+
+/* 
+@media (max-width: 767px) {
+  .table {
+    min-width: 600px;
+  }
+}
+@media (min-width: 768px) {
+} */

@@ -176,43 +176,45 @@ export default function Ventas() {
                 </div>
                 <div className="col-md-9">
                     <div className="card-home-venta">
-                        <table className="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>CANTIDAD</th>
-                                    <th>DESCRIPCION</th>
-                                    <th>PRECIO UNIT</th>
-                                    <th>VALOR TOTAL</th>
-                                    <th>ACCION</th>
-                                </tr>
-                            </thead>
-                            <tbody className="t-body">
-                                {itemList.map((item) => (
-                                    <tr key={item.id}>
-                                        <td className="text-center">{item.quantity}</td>
-                                        <td>{item.description}</td>
-                                        <td>S/ {Number(item.price).toFixed(2)}</td>
-                                        <td>S/ {Number(item.valuetotal).toFixed(2)}</td>
-                                        <td className="text-center">
-                                            <button
-                                                onClick={() => handleDeleteItem(item.id)}
-                                                className="btn btn-second button-small"
-                                            >
-                                                <i className="bi bi-trash"></i>
-                                            </button>
-                                        </td>
+                        <div className="table-responsive">
+                            <table className="table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>CANTIDAD</th>
+                                        <th>DESCRIPCION</th>
+                                        <th>PRECIO UNIT</th>
+                                        <th>VALOR TOTAL</th>
+                                        <th className="text-center">ACCION</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                            <tfoot className="table-footer">
-                                <tr>
-                                    <td colSpan={2}></td>
-                                    <th>TOTAL</th>
-                                    <td>S/ {total.toFixed(2)}</td>
-                                    <td></td>
-                                </tr>
-                            </tfoot>
-                        </table>
+                                </thead>
+                                <tbody className="t-body">
+                                    {itemList.map((item) => (
+                                        <tr key={item.id}>
+                                            <td className="text-center">{item.quantity}</td>
+                                            <td>{item.description}</td>
+                                            <td>S/ {Number(item.price).toFixed(2)}</td>
+                                            <td>S/ {Number(item.valuetotal).toFixed(2)}</td>
+                                            <td className="text-center">
+                                                <button
+                                                    onClick={() => handleDeleteItem(item.id)}
+                                                    className="btn btn-second button-small btn-deleted"
+                                                >
+                                                    <i className="bi bi-trash icon-deleted"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                                <tfoot className="table-footer">
+                                    <tr>
+                                        <td colSpan={2}></td>
+                                        <th>TOTAL</th>
+                                        <td>S/ {total.toFixed(2)}</td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
                     <div className="float-end d-flex">
                         <button className="btn btn-danger mt-3 mx-4" onClick={handleCreateInvoice}>
