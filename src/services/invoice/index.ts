@@ -66,4 +66,12 @@ export class InvoiceService {
         return items.reduce((acc, item) => acc + Number(item.valuetotal), 0);
     }
 
+    public isVerifyHeader = (invoice: Invoice): boolean => {
+        return (
+            invoice.validate.trim() !== "" &&
+            invoice.client.trim() !== "" &&
+            invoice.date.trim() !== ""
+        )
+    }
+
 }

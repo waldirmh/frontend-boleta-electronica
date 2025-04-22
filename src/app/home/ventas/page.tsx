@@ -15,6 +15,7 @@ export default function Ventas() {
     const [invoiceData, setInvoiceData] = useState<Invoice>(invoiceService.getEmptyInvoice());
     const [itemList, setItemList] = useState<Item[]>([]);
     const [itemInvoice, setItemInvoice] = useState<Omit<Item, "id">>(invoiceService.getEmptyItem());
+    const [touched, setTouched] = useState<boolean>(false)
     const total = invoiceService.calculateTotal(itemList);
 
     const handleCreateInvoice = async (e: React.FormEvent) => {
@@ -24,6 +25,16 @@ export default function Ventas() {
                 ...invoiceData,
                 items: itemList
             };
+            if (!invoice.items.length) {
+                toast.info("Debes agregar al menos una descripción")
+                return
+            }
+            if (!invoiceService.isVerifyHeader(invoice)) {
+                toast.error("Complete los datos de la cabecera")
+                setTouched(true)
+                return
+            }
+
             const response = await createInvoiceRequest(invoice)
             if (response && response.status === 201) {
                 setItemList([]);
@@ -99,7 +110,7 @@ export default function Ventas() {
                     </div>
                     <div className="col-md-4">
                         <input
-                            className="form-control input-form"
+                            className={`form-control input-form ${touched && invoiceData.validate.trim() === "" ? "is-invalid" : ""}`}
                             type="text"
                             placeholder="VALIDO POR"
                             value={invoiceData.validate}
@@ -108,7 +119,7 @@ export default function Ventas() {
                     </div>
                     <div className="col-md-4">
                         <input
-                            className="form-control input-form"
+                            className={`form-control input-form ${touched && invoiceData.date.trim() === '' ? "is-invalid" : ""}`}
                             type="date"
                             value={invoiceData.date}
                             onChange={(e) => setInvoiceData({ ...invoiceData, date: e.target.value })}
@@ -116,7 +127,7 @@ export default function Ventas() {
                     </div>
                     <div className="col-md-8">
                         <input
-                            className="form-control input-form"
+                            className={`form-control input-form ${touched && invoiceData.client.trim() === '' ? "is-invalid" : ""}`}
                             type="text"
                             placeholder="SEÑOR(A)"
                             value={invoiceData.client}
