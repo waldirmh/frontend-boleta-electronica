@@ -4,7 +4,8 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Invoice, Item } from "@/interface/invoice-interface";
 import { InvoiceService } from '@/services/invoice';
-import { createInvoiceRequest } from "@/api/invoice";
+import { createInvoiceRequest, getNextNumberRequest } from "@/api/invoice";
+import { toast } from "react-toastify";
 
 export default function Ventas() {
 
@@ -16,15 +17,21 @@ export default function Ventas() {
     const [itemInvoice, setItemInvoice] = useState<Omit<Item, "id">>(invoiceService.getEmptyItem());
     const total = invoiceService.calculateTotal(itemList);
 
-    const handleCreateInvoice = (e: React.FormEvent) => {
+    const handleCreateInvoice = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             const invoice: Invoice = {
                 ...invoiceData,
                 items: itemList
             };
-            const response = createInvoiceRequest(invoice)
-            invoiceService.saveInvoice(invoice);
+            const response = await createInvoiceRequest(invoice)
+            if (response && response.status === 201) {
+                setItemList([]);
+                setInvoiceData(invoiceService.getEmptyInvoice());
+                invoiceService.deletedInvoice()
+                toast.success(response?.data.message)
+                router.push("/home")
+            }
         } catch (err) {
             console.error("Error al guardar:", err);
         }
@@ -55,12 +62,25 @@ export default function Ventas() {
         router.push("/home")
     };
 
+
+    const getNextNumber = async () => {
+        try {
+            const response = await getNextNumberRequest()
+            if (response && response.status === 200) {
+                const number = response?.data?.nextnumber
+                setInvoiceData((prev) => ({ ...prev, number: number }))
+            }
+        } catch (error) {
+            console.log(">request number", error);
+        }
+    }
     useEffect(() => {
         const storageInvoice = invoiceService.getInvoice();
         if (storageInvoice) {
             setInvoiceData(storageInvoice);
             setItemList(storageInvoice.items);
         }
+        getNextNumber()
     }, []);
 
     return (
@@ -105,7 +125,7 @@ export default function Ventas() {
                     </div>
                     <div className="col-md-4">
                         <input
-                            className="form-control input-form correlative"
+                            className="form-control input-form number"
                             type="text"
                             value={invoiceData.number}
                             disabled

@@ -63,6 +63,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const logout = async () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('invoice');
         setUser(null);
         setIsAuthenticated(false);
         router.push('/');

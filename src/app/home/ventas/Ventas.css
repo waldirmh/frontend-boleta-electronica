@@ -25,7 +25,11 @@
   width: 100%;
   border-collapse: collapse;
 }
-
+.number {
+  font-size: 22px;
+  font-weight: 500;
+  color: green !important;
+}
 .table thead,
 .table tfoot {
   display: table;
