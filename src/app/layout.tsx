@@ -34,7 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="app d-flex flex-column">
           <Header />
           <AuthProvider>
-            <main className="container">
+            <main className="container col-12">
               {children}
             </main>
             <ToastContainer />
