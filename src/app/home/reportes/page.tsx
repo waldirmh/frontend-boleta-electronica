@@ -12,7 +12,7 @@ export default function Reporte() {
     const [page, setPage] = useState<number>(1)
     const [perPage, setPerPage] = useState<number>(5)
     const [query, setQuery] = useState<string>("")
-    const [order, setOrder] = useState<string>("DESC")
+    const [sort, setSort] = useState<string>("DESC")
 
     const dataFound = [
         { number: "001-001", client: "Juan Pérez", date: "2025-04-21", phone: "987654321", address: "Av. Siempre Viva 123", saleprice: "150.00" },
@@ -47,15 +47,13 @@ export default function Reporte() {
         setShowModal(true);
     };
 
-
-
     const fetchPaginateInvoices = async () => {
         try {
             const payload: PaginateInvoiceParams = {
                 page,
                 perPage,
                 query,
-                order
+                sort
             };
             const response = await paginateInvoiceRequest(payload)
             console.log(response);
@@ -66,10 +64,9 @@ export default function Reporte() {
     }
 
     useEffect(() => {
+        console.log(" pruebas de render ");
         fetchPaginateInvoices()
-
-            , [page, perPage, query, order]
-    })
+    }, [page, perPage, query, sort])
 
 
     return (

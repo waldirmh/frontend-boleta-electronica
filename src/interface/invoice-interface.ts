@@ -29,5 +29,5 @@ export interface PaginateInvoiceParams {
     page?: number;
     perPage?: number;
     query?: string;
-    order?: string
+    sort?: string
 }
