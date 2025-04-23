@@ -6,12 +6,15 @@ import { Invoice, Item } from "@/interface/invoice-interface";
 import { InvoiceService } from '@/services/invoice';
 import { createInvoiceRequest, getNextNumberRequest } from "@/api/invoice";
 import { toast } from "react-toastify";
+import { Spin } from "antd";
+import { LoadingOutlined } from '@ant-design/icons';
+
 
 export default function Ventas() {
 
     const router = useRouter();
     const invoiceService = new InvoiceService();
-
+    const [loadingSpinner, setLoadingSpinner] = useState<boolean>(false)
     const [invoiceData, setInvoiceData] = useState<Invoice>(invoiceService.getEmptyInvoice());
     const [itemList, setItemList] = useState<Item[]>([]);
     const [itemInvoice, setItemInvoice] = useState<Omit<Item, "id">>(invoiceService.getEmptyItem());
@@ -20,6 +23,7 @@ export default function Ventas() {
 
     const handleCreateInvoice = async (e: React.FormEvent) => {
         e.preventDefault();
+        setLoadingSpinner(true)
         try {
             const invoice: Invoice = {
                 ...invoiceData,
@@ -46,6 +50,9 @@ export default function Ventas() {
             }
         } catch (err) {
             console.error("Error al guardar:", err);
+        }
+        finally {
+            setLoadingSpinner(false)
         }
     };
 
@@ -231,9 +238,17 @@ export default function Ventas() {
                             </table>
                         </div>
                     </div>
-                    <div className="float-end d-flex">
-                        <button className="btn btn-danger mt-3 mx-4" onClick={handleCreateInvoice}>
-                            FINALIZAR
+                    <div className="float-end d-flex gap-2">
+                        <button className="btn btn-danger btn-finish mt-3 d-flex justify-content-center align-items-center"
+                            onClick={handleCreateInvoice}
+                            disabled={loadingSpinner}
+                        >
+                            {loadingSpinner && (
+                                <Spin
+                                    indicator={<LoadingOutlined style={{ fontSize: 20, color: "white" }} spin />}
+                                />
+                            )}
+                            <span className={`${loadingSpinner ? 'd-none' : 'd-block'}`}>FINALIZAR</span>
                         </button>
                         <button className="btn btn-outline-danger mt-3" onClick={cancelInvoice}>
                             CANCELAR

@@ -97,12 +97,17 @@ export default function Signin() {
             </div>
             <div className="d-grid gap-2">
               <button
-                className="btn btn-primary mt-4 d-flex justify-content-center align-items-center gap-2"
+                type="button"
+                className="btn btn-primary mt-4 d-flex justify-content-center align-items-center gap-2 btn-signin"
                 onClick={handleLogin}
                 disabled={loadingSpinner}
               >
-                {loadingSpinner && <Spin indicator={<LoadingOutlined style={{ fontSize: 18, color: "white" }} spin />} />}
-                {loadingSpinner ? "INICIANDO SESIÓN..." : "INICIAR SESIÓN"}
+                {loadingSpinner && (
+                  <Spin
+                    indicator={<LoadingOutlined style={{ fontSize: 20, color: "white" }} spin />}
+                  />
+                )}
+                <span className={`${loadingSpinner ? 'd-none' : 'd-block'}`}> INICIAR SESIÓN</span>
               </button>
             </div>
             <div className='mt-4 fs-6 '>

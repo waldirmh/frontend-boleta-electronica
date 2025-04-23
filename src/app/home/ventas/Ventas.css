@@ -76,6 +76,10 @@
   font-size: 20px;
   border: none;
 }
+.btn-finish {
+  width: 122px;
+  min-width: 110px;
+}
 .is-invalid {
   border-color: red !important;
   background-color: #ffe5e5;

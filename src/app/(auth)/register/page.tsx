@@ -14,7 +14,7 @@ import { toast } from 'react-toastify'
 export default function Register() {
   const { signup, errors } = useAuth();
   const router = useRouter()
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loadingRegister, setLoadingRegister] = useState<boolean>(false)
   const [formData, setFormData] = useState<UserRegisterDTO>({
     email: "",
     username: "",
@@ -23,7 +23,7 @@ export default function Register() {
   });
 
   const handleRegister = async () => {
-    setLoading(true)
+    setLoadingRegister(true)
     const userData = {
       ...formData,
       role: formData.role || "USER"
@@ -39,7 +39,7 @@ export default function Register() {
       console.log("> message error signup:", message);
     }
     finally {
-      setLoading(false)
+      setLoadingRegister(false)
     }
 
   };
@@ -63,7 +63,7 @@ export default function Register() {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [formData]); 
+  }, [formData]);
 
 
   return (
@@ -100,7 +100,7 @@ export default function Register() {
                 className="form-control"
               />
             </div>
-            <div className="form-group mt-4 mb-3 mb-md-5" >
+            <div className="form-group mt-4 mb-3 mb-md-4" >
               <label htmlFor="password" className="form-label">
                 Contraseña
               </label>
@@ -118,10 +118,10 @@ export default function Register() {
               <button
                 className="btn btn-primary mt-4 d-flex justify-content-center align-items-center gap-2"
                 onClick={handleRegister}
-                disabled={loading}
+                disabled={loadingRegister}
               >
-                {loading && <Spin indicator={<LoadingOutlined style={{ fontSize: 18, color: "white" }} spin />} />}
-                {loading ? "Registrando..." : "REGISTRAR"}
+                {loadingRegister && <Spin indicator={<LoadingOutlined style={{ fontSize: 20, color: "white" }} spin />} />}
+                <span className={`${loadingRegister ? 'd-none' : 'd-block'}`}> REGISTRAR</span>
               </button>
 
             </div>
