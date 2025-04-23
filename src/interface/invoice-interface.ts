@@ -17,3 +17,17 @@ export interface Item {
     description: string,
     valuetotal: string
 }
+export interface PaginatedInvoiceResponse {
+    page: number,
+    perPage: number,
+    pages: number,
+    data: Invoice[],
+    total: number
+}
+
+export interface PaginateInvoiceParams {
+    page?: number;
+    perPage?: number;
+    query?: string;
+    order?: string
+}

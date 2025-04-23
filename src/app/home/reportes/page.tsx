@@ -1,13 +1,18 @@
 "use client"
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Report.css"
 import ModalFilter from "@/components/modal/ModalFilter";
+import { paginateInvoiceRequest } from "@/api/invoice";
+import { PaginateInvoiceParams } from "@/interface/invoice-interface";
 
 export default function Reporte() {
 
     const [showModal, setShowModal] = useState<boolean>(false)
-
+    const [page, setPage] = useState<number>(1)
+    const [perPage, setPerPage] = useState<number>(5)
+    const [query, setQuery] = useState<string>("")
+    const [order, setOrder] = useState<string>("DESC")
 
     const dataFound = [
         { number: "001-001", client: "Juan Pérez", date: "2025-04-21", phone: "987654321", address: "Av. Siempre Viva 123", saleprice: "150.00" },
@@ -43,6 +48,28 @@ export default function Reporte() {
     };
 
 
+
+    const fetchPaginateInvoices = async () => {
+        try {
+            const payload: PaginateInvoiceParams = {
+                page,
+                perPage,
+                query,
+                order
+            };
+            const response = await paginateInvoiceRequest(payload)
+            console.log(response);
+        }
+        catch (error) {
+            console.log("> Error:", error);
+        }
+    }
+
+    useEffect(() => {
+        fetchPaginateInvoices()
+
+            , [page, perPage, query, order]
+    })
 
 
     return (
