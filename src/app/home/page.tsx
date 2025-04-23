@@ -22,7 +22,7 @@ export default function Home() {
             >
                 <button
                     onClick={handleLogout}
-                    className="btn btn-outline-danger"
+                    className="btn btn-outline-danger btn-logut"
                 >
                     SALIR
                 </button>

@@ -48,6 +48,7 @@ export class InvoiceService {
             client: "",
             address: "",
             items: [],
+            saleprice:0
         };
     }
 

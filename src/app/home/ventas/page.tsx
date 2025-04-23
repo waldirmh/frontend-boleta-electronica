@@ -23,7 +23,8 @@ export default function Ventas() {
         try {
             const invoice: Invoice = {
                 ...invoiceData,
-                items: itemList
+                items: itemList,
+                saleprice: total
             };
             if (!invoice.items.length) {
                 toast.info("Debes agregar al menos una descripción")
@@ -52,16 +53,18 @@ export default function Ventas() {
         e.preventDefault();
         const newItem = invoiceService.createItem(itemInvoice);
         const updatedItems = [...itemList, newItem];
+        const newTotal = invoiceService.calculateTotal(updatedItems)
         setItemList(updatedItems);
         setItemInvoice(invoiceService.getEmptyItem());
-        const updatedInvoice: Invoice = { ...invoiceData, items: updatedItems };
+        const updatedInvoice: Invoice = { ...invoiceData, items: updatedItems, saleprice: newTotal };
         invoiceService.saveInvoice(updatedInvoice);
     };
 
     const handleDeleteItem = (id: string) => {
         const updatedItems = itemList.filter((item) => item.id !== id);
+        const newTotal = invoiceService.calculateTotal(updatedItems)
         setItemList(updatedItems);
-        const updatedInvoice: Invoice = { ...invoiceData, items: updatedItems };
+        const updatedInvoice: Invoice = { ...invoiceData, items: updatedItems, saleprice: newTotal };
         setInvoiceData(updatedInvoice);
         invoiceService.saveInvoice(updatedInvoice);
     };
@@ -123,6 +126,7 @@ export default function Ventas() {
                             type="date"
                             value={invoiceData.date}
                             onChange={(e) => setInvoiceData({ ...invoiceData, date: e.target.value })}
+                            required
                         />
                     </div>
                     <div className="col-md-8">
@@ -138,7 +142,7 @@ export default function Ventas() {
                         <input
                             className="form-control input-form number"
                             type="text"
-                            value={invoiceData.number}
+                            value={`N° ${invoiceData.number}`}
                             disabled
                         />
                     </div>
@@ -188,7 +192,7 @@ export default function Ventas() {
                 <div className="col-md-9">
                     <div className="card-home-venta">
                         <div className="table-responsive">
-                            <table className="table align-middle">
+                            <table className="table table-hover">
                                 <thead>
                                     <tr>
                                         <th>CANTIDAD</th>
@@ -210,7 +214,7 @@ export default function Ventas() {
                                                     onClick={() => handleDeleteItem(item.id)}
                                                     className="btn btn-second button-small btn-deleted"
                                                 >
-                                                    <i className="bi bi-trash icon-deleted"></i>
+                                                    <i className="bi bi-trash-fill icon-deleted"></i>
                                                 </button>
                                             </td>
                                         </tr>
