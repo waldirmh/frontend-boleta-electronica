@@ -97,11 +97,11 @@
   background-color: #ffe5e5;
 }
 
-tfoot > tr > td {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
+.txt-time {
+  color: #164d05;
+  font-size: 12px;
 }
+
 /* react paginate  */
 
 .pagination {

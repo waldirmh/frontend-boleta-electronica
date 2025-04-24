@@ -6,6 +6,8 @@ import ModalFilter from "@/components/modal/ModalFilter";
 import { paginateInvoiceRequest } from "@/api/invoice";
 import { PaginateInvoiceParams } from "@/interface/invoice-interface";
 import ReactPaginate from 'react-paginate';
+import { formatDateTime } from "@/utils/dateUtils";
+
 
 export default function Reporte() {
 
@@ -14,6 +16,11 @@ export default function Reporte() {
     const [perPage, setPerPage] = useState<number>(7)
     const [query, setQuery] = useState<string>("")
     const [sort, setSort] = useState<string>("DESC")
+
+
+    const [startDate, setStartDate] = useState<string>("");
+    const [endDate, setEndDate] = useState<string>("");
+
 
     const [data, setData] = useState([])
     const [pages, setPages] = useState<number>(1)
@@ -24,13 +31,21 @@ export default function Reporte() {
         setShowModal(true);
     };
 
+
+    const onCloseModalFilter = () => {
+        setShowModal(false)
+    }
+
+
     const fetchPaginateInvoices = async () => {
         try {
             const payload: PaginateInvoiceParams = {
                 page,
                 perPage,
                 query,
-                sort
+                sort,
+                startDate,
+                endDate
             };
             const response = await paginateInvoiceRequest(payload)
             if (response && response.status === 200) {
@@ -46,6 +61,17 @@ export default function Reporte() {
     const handlePageClick = (event: { selected: number }) => {
         setPage(event.selected + 1) // react paginate usa 0-index
     };
+    const handleFilter = (filters: { startDate?: string; endDate?: string }) => {
+        console.log("Filtros recibidos en el padre:", filters);
+        setStartDate(filters.startDate || "")
+        setEndDate(filters.endDate || "")
+        setPage(1)
+        setShowModal(false)
+        console.log("start date :", startDate);
+        console.log("end date :", endDate);
+        fetchPaginateInvoices()
+
+    }
 
     useEffect(() => {
         fetchPaginateInvoices()
@@ -99,13 +125,21 @@ export default function Reporte() {
                                 <tr key={index}>
                                     <td>{item.number}</td>
                                     <td>{item.client}</td>
-                                    <td>{item.date}</td>
+                                    <td>
+                                        <span className="d-block txt-date">
+                                            {formatDateTime(item.date).date}
+                                        </span>
+                                        <span className="d-block txt-time">
+                                            {formatDateTime(item.date).time}
+                                        </span>
+
+                                    </td>
                                     <td>{item.phone}</td>
                                     <td>{item.address}</td>
                                     <td className="text-center">S/ {item.saleprice}</td>
 
                                     <td className="text-center">
-                                        <div className="content-action">
+                                        <div className="content-action d-flex justify-content-center align-items-center">
                                             <button className="btn btn-sm btn-pdf">
                                                 <i className="bi bi-file-earmark-pdf-fill icon-pdf"></i>
                                             </button>
@@ -139,7 +173,10 @@ export default function Reporte() {
                     activeClassName="active"
                 />
             </div>
-            {showModal && <ModalFilter onClose={() => setShowModal(false)} />}
+            {showModal && <ModalFilter
+                onClose={onCloseModalFilter}
+                onFilter={handleFilter}
+            />}
         </>
 
     );

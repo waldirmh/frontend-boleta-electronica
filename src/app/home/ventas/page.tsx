@@ -10,6 +10,8 @@ import { Spin } from "antd";
 import { LoadingOutlined } from '@ant-design/icons';
 
 
+import { combineDateWithCurrentTime } from "@/utils/dateUtils";
+
 export default function Ventas() {
 
     const router = useRouter();
@@ -83,7 +85,6 @@ export default function Ventas() {
         router.push("/home")
     };
 
-
     const getNextNumber = async () => {
         try {
             const response = await getNextNumberRequest()
@@ -131,8 +132,11 @@ export default function Ventas() {
                         <input
                             className={`form-control input-form ${touched && invoiceData.date.trim() === '' ? "is-invalid" : ""}`}
                             type="date"
-                            value={invoiceData.date}
-                            onChange={(e) => setInvoiceData({ ...invoiceData, date: e.target.value })}
+                            value={invoiceData.date.split("T")[0]}
+                            onChange={(e) => {
+                                const isoWithTime = combineDateWithCurrentTime(e.target.value);
+                                setInvoiceData({ ...invoiceData, date: isoWithTime });
+                            }}
                             required
                         />
                     </div>

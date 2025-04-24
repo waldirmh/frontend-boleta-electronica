@@ -1,10 +1,29 @@
+"use client"
+import { useState } from "react";
 import "./ModalFilter.css";
 
 interface ModalFilterProps {
     onClose: () => void;
+    onFilter: (filters: { startDate?: string; endDate?: string }) => void
 }
 
-export default function ModalFilter({ onClose }: ModalFilterProps) {
+
+
+
+
+
+export default function ModalFilter({ onClose, onFilter }: ModalFilterProps) {
+
+    const [startDate, setStartDate] = useState<string>("")
+    const [endDate, setEndDate] = useState<string>("")
+
+    const handleApplyFilter = () => {
+        console.log("Start Date:", startDate);
+        console.log("End Date:", endDate);
+        onFilter({ startDate, endDate })
+    }
+
+
     return (
         <div
             className="modal fade show d-block custom-modal-overlay"
@@ -34,6 +53,8 @@ export default function ModalFilter({ onClose }: ModalFilterProps) {
                                 className="form-control"
                                 name="dateStart"
                                 required
+                                value={startDate}
+                                onChange={(e) => setStartDate(e.target.value)}
                             />
                         </div>
                         <div className="">
@@ -43,6 +64,8 @@ export default function ModalFilter({ onClose }: ModalFilterProps) {
                                 className="form-control"
                                 name="dateEnd"
                                 required
+                                value={endDate}
+                                onChange={(e) => setEndDate(e.target.value)}
                             />
                         </div>
                     </div>
@@ -55,7 +78,10 @@ export default function ModalFilter({ onClose }: ModalFilterProps) {
                         >
                             CERRAR
                         </button>
-                        <button type="button" className="btn btn-primary">
+                        <button
+                            type="button"
+                            className="btn btn-primary"
+                            onClick={handleApplyFilter}>
                             FILTRAR
                         </button>
                     </div>
