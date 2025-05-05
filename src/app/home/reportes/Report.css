@@ -158,6 +158,39 @@
   box-shadow: none;
 }
 
+/* esqueleton  */
+.skeleton {
+  background-color: #e0e0e0;
+  border-radius: 2px;
+  width: 100%;
+  height: 20px;
+  max-height: 30px;
+  animation: pulse 1.5s infinite;
+}
+
+.skeleton-text {
+  height: 30px;
+  margin: 4px 0;
+}
+
+.skeleton-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 2px;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 @media (max-width: 767px) {
   .content-action {
     gap: 0 !important;

@@ -20,7 +20,8 @@ export default function Ventas() {
     const [invoiceData, setInvoiceData] = useState<Invoice>(invoiceService.getEmptyInvoice());
     const [itemList, setItemList] = useState<Item[]>([]);
     const [itemInvoice, setItemInvoice] = useState<Omit<Item, "id">>(invoiceService.getEmptyItem());
-    const [touched, setTouched] = useState<boolean>(false)
+    const [touchedHeader, setTouchedHeader] = useState<boolean>(false)
+    const [touchedItem, setTouchedItem] = useState<boolean>(false)
     const total = invoiceService.calculateTotal(itemList);
 
     const handleCreateInvoice = async (e: React.FormEvent) => {
@@ -33,12 +34,12 @@ export default function Ventas() {
                 saleprice: total
             };
             if (!invoice.items.length) {
-                toast.info("Debes agregar al menos una descripción")
+                toast.info("Debes agregar al menos una venta")
                 return
             }
             if (!invoiceService.isVerifyHeader(invoice)) {
                 toast.error("Complete los datos de la cabecera")
-                setTouched(true)
+                setTouchedHeader(true)
                 return
             }
 
@@ -60,13 +61,21 @@ export default function Ventas() {
 
     const handleAddItem = (e: React.FormEvent) => {
         e.preventDefault();
+
         const newItem = invoiceService.createItem(itemInvoice);
+        if (!invoiceService.isVerifySale(newItem)) {
+            setTouchedItem(true)
+            return
+        }
         const updatedItems = [...itemList, newItem];
         const newTotal = invoiceService.calculateTotal(updatedItems)
+
         setItemList(updatedItems);
         setItemInvoice(invoiceService.getEmptyItem());
         const updatedInvoice: Invoice = { ...invoiceData, items: updatedItems, saleprice: newTotal };
         invoiceService.saveInvoice(updatedInvoice);
+        setTouchedItem(false)
+
     };
 
     const handleDeleteItem = (id: string) => {
@@ -121,7 +130,7 @@ export default function Ventas() {
                     </div>
                     <div className="col-md-4">
                         <input
-                            className={`form-control input-form ${touched && invoiceData.validate.trim() === "" ? "is-invalid" : ""}`}
+                            className={`form-control input-form ${touchedHeader && invoiceData.validate.trim() === "" ? "is-invalid" : ""}`}
                             type="text"
                             placeholder="VALIDO POR"
                             value={invoiceData.validate}
@@ -130,7 +139,7 @@ export default function Ventas() {
                     </div>
                     <div className="col-md-4">
                         <input
-                            className={`form-control input-form ${touched && invoiceData.date.trim() === '' ? "is-invalid" : ""}`}
+                            className={`form-control input-form ${touchedHeader && invoiceData.date.trim() === '' ? "is-invalid" : ""}`}
                             type="date"
                             value={invoiceData.date.split("T")[0]}
                             onChange={(e) => {
@@ -142,7 +151,7 @@ export default function Ventas() {
                     </div>
                     <div className="col-md-8">
                         <input
-                            className={`form-control input-form ${touched && invoiceData.client.trim() === '' ? "is-invalid" : ""}`}
+                            className={`form-control input-form ${touchedHeader && invoiceData.client.trim() === '' ? "is-invalid" : ""}`}
                             type="text"
                             placeholder="SEÑOR(A)"
                             value={invoiceData.client}
@@ -173,7 +182,7 @@ export default function Ventas() {
                 <div className="col-md-3">
                     <div className="card-home-venta">
                         <input
-                            className="form-control input-form"
+                            className={`form-control input-form ${touchedItem && itemInvoice.quantity.trim() === '' ? "is-invalid" : ""}`}
                             type="number"
                             placeholder="Cantidad"
                             value={itemInvoice.quantity}
@@ -181,7 +190,7 @@ export default function Ventas() {
                             required
                         />
                         <input
-                            className="form-control input-form"
+                            className={`form-control input-form ${touchedItem && itemInvoice.price.trim() === '' ? "is-invalid" : ""}`}
                             type="number"
                             placeholder="Precio"
                             value={itemInvoice.price}
@@ -189,7 +198,8 @@ export default function Ventas() {
                             required
                         />
                         <textarea
-                            className="form-control input-form h-25"
+                            className={`form-control input-form h-25 ${touchedItem && itemInvoice.description.trim() === '' ? "is-invalid" : ""}`}
+
                             placeholder="Descripción"
                             value={itemInvoice.description}
                             onChange={(e) => setItemInvoice({ ...itemInvoice, description: e.target.value })}

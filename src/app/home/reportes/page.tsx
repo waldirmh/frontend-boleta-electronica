@@ -12,6 +12,7 @@ import { formatDateTime } from "@/utils/dateUtils";
 export default function Reporte() {
 
     const [showModal, setShowModal] = useState<boolean>(false)
+    const [loadingPaginateInvoice, setLoadingPaginateInvoice] = useState<boolean>(false)
     const [page, setPage] = useState<number>(1)
     const [perPage, setPerPage] = useState<number>(7)
     const [query, setQuery] = useState<string>("")
@@ -22,7 +23,7 @@ export default function Reporte() {
     const [endDate, setEndDate] = useState<string>("");
 
 
-    const [data, setData] = useState([])
+    const [dataInvoice, setDataInvoice] = useState([])
     const [pages, setPages] = useState<number>(1)
 
 
@@ -38,6 +39,7 @@ export default function Reporte() {
 
 
     const fetchPaginateInvoices = async () => {
+        setLoadingPaginateInvoice(true)
         try {
             const payload: PaginateInvoiceParams = {
                 page,
@@ -49,12 +51,15 @@ export default function Reporte() {
             };
             const response = await paginateInvoiceRequest(payload)
             if (response && response.status === 200) {
-                setData(response?.data.data)
+                setDataInvoice(response?.data.data)
                 setPages(response?.data.pages)
             }
         }
         catch (error) {
             console.log("> Error:", error);
+        }
+        finally {
+            setLoadingPaginateInvoice(false)
         }
     }
 
@@ -72,6 +77,8 @@ export default function Reporte() {
         fetchPaginateInvoices()
 
     }
+
+    const skeletonRows = Array.from({ length: perPage }, (_, index) => index)
 
     useEffect(() => {
         fetchPaginateInvoices()
@@ -120,37 +127,60 @@ export default function Reporte() {
                                 <th>ACCIÓN</th>
                             </tr>
                         </thead>
-                        <tbody className="t-body">
-                            {data.map((item: any, index: number) => (
-                                <tr key={index}>
-                                    <td>{item.number}</td>
-                                    <td>{item.client}</td>
-                                    <td>
-                                        <span className="d-block txt-date">
-                                            {formatDateTime(item.date).date}
-                                        </span>
-                                        <span className="d-block txt-time">
-                                            {formatDateTime(item.date).time}
-                                        </span>
+                        <tbody className="t-body">{
+                            loadingPaginateInvoice ? (
+                                skeletonRows.map((_, index) => (
+                                    <tr key={`skeleton-${index}`}>
+                                        <td><div className="skeleton skeleton-text"></div></td>
+                                        <td><div className="skeleton skeleton-text"></div></td>
+                                        <td>
+                                            <div className="d-block skeleton skeleton-text"></div>
+                                        </td>
+                                        <td><div className="skeleton skeleton-text"></div></td>
+                                        <td><div className="skeleton skeleton-text"></div></td>
+                                        <td className="text-center"><div className="skeleton skeleton-text"></div></td>
+                                        <td className="text-center">
+                                            <div className="content-action d-flex justify-content-center align-items-center">
+                                                <div className="btn btn-sm btn-pdf skeleton skeleton-btn"></div>
+                                                <div className="btn btn-sm btn-deleted skeleton skeleton-btn"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
 
-                                    </td>
-                                    <td>{item.phone}</td>
-                                    <td>{item.address}</td>
-                                    <td className="text-center">S/ {item.saleprice}</td>
+                            ) : (
+                                dataInvoice.map((item: any, index: number) => (
+                                    <tr key={index}>
+                                        <td>{item.number}</td>
+                                        <td>{item.client}</td>
+                                        <td>
+                                            <span className="d-block txt-date">
+                                                {formatDateTime(item.date).date}
+                                            </span>
+                                            <span className="d-block txt-time">
+                                                {formatDateTime(item.date).time}
+                                            </span>
 
-                                    <td className="text-center">
-                                        <div className="content-action d-flex justify-content-center align-items-center">
-                                            <button className="btn btn-sm btn-pdf">
-                                                <i className="bi bi-file-earmark-pdf-fill icon-pdf"></i>
-                                            </button>
+                                        </td>
+                                        <td>{item.phone}</td>
+                                        <td>{item.address}</td>
+                                        <td className="text-center">S/ {item.saleprice}</td>
 
-                                            <button className="btn  btn-sm btn-deleted">
-                                                <i className="bi bi-trash-fill icon-deleted"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
+                                        <td className="text-center">
+                                            <div className="content-action d-flex justify-content-center align-items-center">
+                                                <button className="btn btn-sm btn-pdf">
+                                                    <i className="bi bi-file-earmark-pdf-fill icon-pdf"></i>
+                                                </button>
+
+                                                <button className="btn  btn-sm btn-deleted">
+                                                    <i className="bi bi-trash-fill icon-deleted"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )
+                        }
                         </tbody>
 
                     </table>
@@ -173,10 +203,12 @@ export default function Reporte() {
                     activeClassName="active"
                 />
             </div>
-            {showModal && <ModalFilter
-                onClose={onCloseModalFilter}
-                onFilter={handleFilter}
-            />}
+            {
+                showModal && <ModalFilter
+                    onClose={onCloseModalFilter}
+                    onFilter={handleFilter}
+                />
+            }
         </>
 
     );

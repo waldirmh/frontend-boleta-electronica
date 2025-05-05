@@ -48,7 +48,7 @@ export class InvoiceService {
             client: "",
             address: "",
             items: [],
-            saleprice:0
+            saleprice: 0
         };
     }
 
@@ -66,13 +66,21 @@ export class InvoiceService {
     public calculateTotal(items: Item[]): number {
         return items.reduce((acc, item) => acc + Number(item.valuetotal), 0);
     }
-
+    // verifica los campos de la cabecera 
     public isVerifyHeader = (invoice: Invoice): boolean => {
         return (
             invoice.validate.trim() !== "" &&
             invoice.client.trim() !== "" &&
             invoice.date.trim() !== ""
         )
+    }
+
+    // verifica los campos de los item 
+    public isVerifySale = (item: Item): boolean => {
+        return (
+            item.quantity.trim() !== "" &&
+            item.price.trim() !== "" &&
+            item.description.trim() !== "")
     }
 
 }
