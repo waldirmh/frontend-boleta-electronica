@@ -4,7 +4,8 @@ export interface Invoice {
     number: string;
     phone: string;
     validate: string;
-    date: string;
+    createdDate: string; // string ISO
+    // createdDate: Date | null;
     client: string;
     address: string;
     items: Item[];

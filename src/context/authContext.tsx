@@ -7,6 +7,7 @@ import {
     AuthContextType, UserLoginDTO, UserRegisterDTO, User, JwtPayload
 } from '@/interface/auth-interface';
 import { jwtDecode } from 'jwt-decode';
+import { toast } from 'react-toastify';
 // Inicialización del contexto
 const AuthContext = createContext<AuthContextType | null>(null);
 

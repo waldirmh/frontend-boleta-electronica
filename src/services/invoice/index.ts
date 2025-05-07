@@ -44,7 +44,7 @@ export class InvoiceService {
             number: "",
             phone: "",
             validate: "",
-            date: "",
+            createdDate: "",
             client: "",
             address: "",
             items: [],
@@ -71,7 +71,10 @@ export class InvoiceService {
         return (
             invoice.validate.trim() !== "" &&
             invoice.client.trim() !== "" &&
-            invoice.date.trim() !== ""
+            invoice.createdDate.trim() !== "" 
+            // invoice.createdDate !== null &&
+            // invoice.createdDate instanceof Date &&
+            // !isNaN(invoice.createdDate.getTime())
         )
     }
 

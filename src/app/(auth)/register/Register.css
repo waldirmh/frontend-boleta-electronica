@@ -7,7 +7,7 @@
   letter-spacing: 0.26em;
 }
 
-.form-control {
+.form-control-signup {
   border-radius: 0 !important;
   height: 45px !important;
   transition: all 0.5s;
@@ -18,20 +18,21 @@
   outline: none !important;
 }
 
-.form-label {
+.form-label-signup {
   text-align: left;
   font-weight: 400;
-  font-size: 21px;
+  font-size: 24px;
   line-height: 30px;
   color: #999999;
   width: 100%;
+  margin-bottom: 2px;
 }
 
 .register-title {
   margin-bottom: 20px;
 }
 
-.btn {
+.btn-signup {
   padding: 10px !important;
   height: 45px !important;
   outline: none;
@@ -99,6 +100,15 @@
   }
   .card-body {
     padding: 0px 10px 0px 10px;
+  }
+  .register-title {
+    line-height: 50px;
+  }
+
+  .form-label-signup {
+    line-height: 30px;
+
+    font-size: 20px;
   }
 }
 @media (min-width: 768px) {

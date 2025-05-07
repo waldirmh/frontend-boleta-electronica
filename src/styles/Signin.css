@@ -6,24 +6,25 @@
   letter-spacing: 0.26em;
 }
 
-.form-control {
+.form-control-signin {
   border-radius: 0 !important;
   height: 45px !important;
   transition: all 0.5s;
 }
 
-.form-control:focus {
+.form-control-signin:focus {
   border: 1px solid var(--primary-color) !important;
   outline: none !important;
 }
 
-.form-label {
+.form-label-signin {
   text-align: left;
   font-weight: 400;
   font-size: 24px;
   line-height: 35px;
   color: #999999;
   width: 100%;
+  margin-bottom: 2px;
 }
 
 .btn-signin {
@@ -95,6 +96,15 @@
   }
   .card-body {
     padding: 0px 10px 0px 10px;
+  }
+  .form-label-signin {
+    font-size: 20px !important;
+  }
+  .signin-title {
+    line-height: 45px;
+  }
+  .form-label-signin {
+    line-height: 30px;
   }
 }
 @media (min-width: 768px) {

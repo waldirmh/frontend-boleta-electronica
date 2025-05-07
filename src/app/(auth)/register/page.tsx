@@ -70,10 +70,10 @@ export default function Register() {
     <div className="row align-items-center justify-content-center">
       <div className="col-12 col-sm-10 col-md-6 col-lg-5">
         <div className="mt-1 mt-md-4 text-center">
-          <div className="register-title mb-0 mb-md-3">REGISTRAR</div>
+          <h1 className='register-title mb-0 mb-md-3'> REGISTRAR</h1>
           <div className="card-body">
             <div className="form-group">
-              <label htmlFor="email" className="form-label">
+              <label htmlFor="email" className="form-label form-label-signup">
                 Correo
               </label>
               <input
@@ -83,11 +83,11 @@ export default function Register() {
                 name="email"
                 id="email"
                 placeholder="correo"
-                className="form-control"
+                className="form-control form-control-signup"
               />
             </div>
-            <div className="form-group mt-4 mt-md-4 mb-3 mb-md-4">
-              <label htmlFor="username" className="form-label">
+            <div className="form-group mt-2 mt-md-4 mb-2 mb-md-4">
+              <label htmlFor="username" className="form-label form-label-signup">
                 Usuario
               </label>
               <input
@@ -97,11 +97,11 @@ export default function Register() {
                 name="username"
                 id="username"
                 placeholder="nombre de usuario"
-                className="form-control"
+                className="form-control form-control-signup"
               />
             </div>
-            <div className="form-group mt-4 mb-3 mb-md-4" >
-              <label htmlFor="password" className="form-label">
+            <div className="form-group mt-2 mb-1 mb-md-4" >
+              <label htmlFor="password" className="form-label form-label-signup">
                 Contraseña
               </label>
               <input
@@ -111,12 +111,12 @@ export default function Register() {
                 name="password"
                 id="password"
                 placeholder="******"
-                className="form-control"
+                className="form-control form-control-signup"
               />
             </div>
             <div className="d-grid gap-2">
               <button
-                className="btn btn-primary mt-4 d-flex justify-content-center align-items-center gap-2"
+                className="btn btn-primary mt-4 d-flex justify-content-center align-items-center gap-2 btn-signup"
                 onClick={handleRegister}
                 disabled={loadingRegister}
               >

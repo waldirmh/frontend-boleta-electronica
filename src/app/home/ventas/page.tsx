@@ -8,9 +8,11 @@ import { createInvoiceRequest, getNextNumberRequest } from "@/api/invoice";
 import { toast } from "react-toastify";
 import { Spin } from "antd";
 import { LoadingOutlined } from '@ant-design/icons';
-
-
 import { combineDateWithCurrentTime } from "@/utils/dateUtils";
+
+import type { DatePickerProps } from 'antd';
+import { DatePicker } from 'antd';
+
 
 export default function Ventas() {
 
@@ -28,10 +30,13 @@ export default function Ventas() {
         e.preventDefault();
         setLoadingSpinner(true)
         try {
+            let currentDateInvoice = combineDateWithCurrentTime(invoiceData.createdDate)
+
             const invoice: Invoice = {
                 ...invoiceData,
                 items: itemList,
-                saleprice: total
+                saleprice: total,
+                createdDate: currentDateInvoice
             };
             if (!invoice.items.length) {
                 toast.info("Debes agregar al menos una venta")
@@ -42,7 +47,6 @@ export default function Ventas() {
                 setTouchedHeader(true)
                 return
             }
-
             const response = await createInvoiceRequest(invoice)
             if (response && response.status === 201) {
                 setItemList([]);
@@ -51,8 +55,14 @@ export default function Ventas() {
                 toast.success(response?.data.message)
                 router.push("/home")
             }
-        } catch (err) {
-            console.error("Error al guardar:", err);
+        } catch (error: any) {
+            if (error.response) {
+                const message = error.response?.data?.error.message
+                toast.error(message)
+            }
+            else {
+                console.log("Error:", error);
+            }
         }
         finally {
             setLoadingSpinner(false)
@@ -105,6 +115,13 @@ export default function Ventas() {
             console.log(">request number", error);
         }
     }
+
+    const onChange: DatePickerProps['onChange'] = (date, dateString) => {
+        const isoDate = date ? date.toISOString().split('T')[0] : '';
+        setInvoiceData({ ...invoiceData, createdDate: isoDate });
+    };
+
+
     useEffect(() => {
         const storageInvoice = invoiceService.getInvoice();
         if (storageInvoice) {
@@ -118,15 +135,19 @@ export default function Ventas() {
         <div className="container mb-3">
             <div className="card-home-venta">
                 <div className="row">
-                    <div className="col-md-4">
-                        <input
-                            className="form-control input-form"
-                            type="text"
-                            placeholder="TELEFONO"
-                            value={invoiceData.phone}
-                            onChange={(e) => setInvoiceData({ ...invoiceData, phone: e.target.value })}
-                            required
-                        />
+                    <div className="col-md-4 ">
+                        <div className="input-group">
+                            <span className="input-group-text select-number" id="basic-addon1">+51</span>
+                            <input
+                                className={`form-control input-form ${invoiceData.phone.length > 9 ? "is-invalid" : ""}`}
+                                type="text"
+                                placeholder="TELEFONO"
+                                value={invoiceData.phone}
+                                onChange={(e) => setInvoiceData({ ...invoiceData, phone: e.target.value })}
+                                required
+                            />
+                        </div>
+
                     </div>
                     <div className="col-md-4">
                         <input
@@ -138,15 +159,10 @@ export default function Ventas() {
                         />
                     </div>
                     <div className="col-md-4">
-                        <input
-                            className={`form-control input-form ${touchedHeader && invoiceData.date.trim() === '' ? "is-invalid" : ""}`}
-                            type="date"
-                            value={invoiceData.date.split("T")[0]}
-                            onChange={(e) => {
-                                const isoWithTime = combineDateWithCurrentTime(e.target.value);
-                                setInvoiceData({ ...invoiceData, date: isoWithTime });
-                            }}
-                            required
+                        <DatePicker
+                            className={`form-control input-form ${touchedHeader && invoiceData.createdDate.trim() === "" ? "is-invalid" : ""}`}
+                            onChange={onChange}
+                            placeholder="Selecciona fecha"
                         />
                     </div>
                     <div className="col-md-8">
@@ -199,7 +215,6 @@ export default function Ventas() {
                         />
                         <textarea
                             className={`form-control input-form h-25 ${touchedItem && itemInvoice.description.trim() === '' ? "is-invalid" : ""}`}
-
                             placeholder="Descripción"
                             value={itemInvoice.description}
                             onChange={(e) => setItemInvoice({ ...itemInvoice, description: e.target.value })}
@@ -233,7 +248,7 @@ export default function Ventas() {
                                             <td className="text-center">
                                                 <button
                                                     onClick={() => handleDeleteItem(item.id)}
-                                                    className="btn btn-second button-small btn-deleted"
+                                                    className="btn btn-second button-small btn-deleted-sales"
                                                 >
                                                     <i className="bi bi-trash-fill icon-deleted"></i>
                                                 </button>

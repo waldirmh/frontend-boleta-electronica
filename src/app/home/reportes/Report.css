@@ -56,6 +56,10 @@
 .btn-home {
   font-size: 25px;
 }
+.btn-pdf .btn-deleted {
+  padding: 0px;
+  max-height: 25px;
+}
 .btn-filter,
 .btn-export {
   padding: 5px !important;

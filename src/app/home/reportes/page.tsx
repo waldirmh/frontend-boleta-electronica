@@ -155,10 +155,10 @@ export default function Reporte() {
                                         <td>{item.client}</td>
                                         <td>
                                             <span className="d-block txt-date">
-                                                {formatDateTime(item.date).date}
+                                                {formatDateTime(item.createdDate).date}
                                             </span>
                                             <span className="d-block txt-time">
-                                                {formatDateTime(item.date).time}
+                                                {formatDateTime(item.createdDate).time}
                                             </span>
 
                                         </td>

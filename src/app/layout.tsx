@@ -11,6 +11,10 @@ import React from "react";
 import Footer from "@/components/footer/Footer"
 import Header from "@/components/header/Header"
 import { AuthProvider } from "@/context/authContext";
+//  NUEVO: Ant Design ConfigProvider y locale
+import { ConfigProvider } from 'antd';
+import esES from 'antd/es/locale/es_ES';
+import 'dayjs/locale/es'; // importante para que los meses/días estén en español
 
 
 const inter = Inter({
@@ -34,9 +38,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="app d-flex flex-column">
           <Header />
           <AuthProvider>
-            <main className="container col-12">
-              {children}
-            </main>
+            <ConfigProvider locale={esES}>
+              <main className="container col-12">
+                {children}
+              </main>
+            </ConfigProvider>
             <ToastContainer />
           </AuthProvider>
           <Footer />

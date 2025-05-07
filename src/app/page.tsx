@@ -69,10 +69,10 @@ export default function Signin() {
     <div className="row align-items-center justify-content-center">
       <div className="col-12 col-sm-10 col-md-6 col-lg-5">
         <div className="mt-2 mt-md-4 text-center">
-          <div className="signin-title mb-1 mb-md-3">INGRESAR</div>
+          <h1 className='signin-title mb-1 mb-md-3'> INGRESAR</h1>
           <div className="card-body">
             <div className="form-group">
-              <label htmlFor="username" className="form-label">Usuario</label>
+              <label htmlFor="username" className="form-label form-label-signin">Usuario</label>
               <input
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -80,11 +80,11 @@ export default function Signin() {
                 name="email"
                 id="email"
                 placeholder="correo"
-                className="form-control"
+                className="form-control form-control-signin"
               />
             </div>
             <div className="form-group mt-4 mt-md-4 mb-3 mb-md-5">
-              <label htmlFor="password" className="form-label">Contraseña</label>
+              <label htmlFor="password" className="form-label form-label-signin">Contraseña</label>
               <input
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -92,7 +92,7 @@ export default function Signin() {
                 name="password"
                 id="password"
                 placeholder="******"
-                className="form-control"
+                className="form-control form-control-signin"
               />
             </div>
             <div className="d-grid gap-2">
