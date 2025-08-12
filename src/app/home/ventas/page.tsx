@@ -162,7 +162,7 @@ export default function Ventas() {
                         <DatePicker
                             className={`form-control input-form ${touchedHeader && invoiceData.createdDate.trim() === "" ? "is-invalid" : ""}`}
                             onChange={onChange}
-                            placeholder="Selecciona fecha"
+                            placeholder="SELECCIONA FECHA"
                         />
                     </div>
                     <div className="col-md-8">
