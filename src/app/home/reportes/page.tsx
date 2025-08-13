@@ -3,11 +3,12 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import "./Report.css"
 import ModalFilter from "@/components/modal/ModalFilter";
-import { paginateInvoiceRequest } from "@/api/invoice";
+import { deletedInvoiceByIdRequest, paginateInvoiceRequest } from "@/api/invoice";
 import { PaginateInvoiceParams } from "@/interface/invoice-interface";
 import ReactPaginate from 'react-paginate';
 import { formatDateTime } from "@/utils/dateUtils";
-
+import type { PopconfirmProps } from 'antd';
+import { Button, message, Popconfirm } from 'antd';
 
 export default function Reporte() {
 
@@ -27,6 +28,10 @@ export default function Reporte() {
     const [pages, setPages] = useState<number>(1)
 
 
+
+    const cancel: PopconfirmProps['onCancel'] = (e) => {
+    };
+
     const openModalFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         setShowModal(true);
@@ -37,6 +42,21 @@ export default function Reporte() {
         setShowModal(false)
     }
 
+
+    const handleDelete = async (item: any) => {
+        try {
+            const res = await deletedInvoiceByIdRequest(item._id);
+            if (res.status === 200) {
+                message.success(`Comprobante ${item.number} eliminado.`);
+                await fetchPaginateInvoices();
+            } else {
+                message.error("No se pudo eliminar el comprobante.");
+            }
+        } catch (err: any) {
+            message.error(err?.response?.data?.message ?? "Error al eliminar el comprobante.");
+        } finally {
+        }
+    };
 
     const fetchPaginateInvoices = async () => {
         setLoadingPaginateInvoice(true)
@@ -64,7 +84,7 @@ export default function Reporte() {
     }
 
     const handlePageClick = (event: { selected: number }) => {
-        setPage(event.selected + 1) // react paginate usa 0-index
+        setPage(event.selected + 1) 
     };
     const handleFilter = (filters: { startDate?: string; endDate?: string }) => {
         console.log("Filtros recibidos en el padre:", filters);
@@ -87,7 +107,7 @@ export default function Reporte() {
 
     return (
         <>
-            <div className="card-report mb-0 px-sm-2 px-md-2 py-0 py-sm-0 py-md-1 py-lg-1">
+            <div className="card-report-header mb-0 px-sm-2 px-md-2 py-0 py-sm-0 py-md-1 py-lg-1">
                 <form method="POST" action="/filterOrderByDate">
                     <div className="row mb-0 mb-md-3">
                         <div className="col-md-6 col-lg-5 d-flex align-items-center justify-content-center gap-1">
@@ -160,21 +180,27 @@ export default function Reporte() {
                                             <span className="d-block txt-time">
                                                 {formatDateTime(item.createdDate).time}
                                             </span>
-
                                         </td>
                                         <td>{item.phone}</td>
                                         <td>{item.address}</td>
                                         <td className="text-center">S/ {item.saleprice}</td>
-
                                         <td className="text-center">
                                             <div className="content-action d-flex justify-content-center align-items-center">
                                                 <button className="btn btn-sm btn-pdf">
                                                     <i className="bi bi-file-earmark-pdf-fill icon-pdf"></i>
                                                 </button>
-
-                                                <button className="btn  btn-sm btn-deleted">
-                                                    <i className="bi bi-trash-fill icon-deleted"></i>
-                                                </button>
+                                                <Popconfirm
+                                                    title="Eliminar Comprobante"
+                                                    description={`¿Está seguro de eliminar el comprobante Nro: ${item.number}?`}
+                                                    onConfirm={() => handleDelete(item)}
+                                                    onCancel={cancel}
+                                                    okText="Yes"
+                                                    cancelText="No"
+                                                >
+                                                    <button className="btn  btn-sm btn-deleted">
+                                                        <i className="bi bi-trash-fill icon-deleted"></i>
+                                                    </button>
+                                                </Popconfirm>
                                             </div>
                                         </td>
                                     </tr>

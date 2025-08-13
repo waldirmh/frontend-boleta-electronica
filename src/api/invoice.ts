@@ -15,6 +15,9 @@ export const paginateInvoiceRequest = (
     return axios.get('/invoice', { params })
 }
 
+export const deletedInvoiceByIdRequest = (id: string): Promise<any> => {
+    return axios.delete(`/invoice/${encodeURIComponent(id)}`);
+}
 
 
 
