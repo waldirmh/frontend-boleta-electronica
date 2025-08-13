@@ -20,7 +20,7 @@ export const formatDateTime = (date: string) => {
  * Combina una fecha (YYYY-MM-DD) con la hora actual en Lima, y devuelve un ISO UTC string.
  * @param dateOnly Fecha seleccionada por el usuario (formato 'YYYY-MM-DD')
  */
- export const combineDateWithCurrentTime = (dateOnly: string): string => {
+export const combineDateWithCurrentTime = (dateOnly: string): string => {
   const now = DateTime.now().setZone('America/Lima');
 
   const combined = DateTime.fromISO(dateOnly, { zone: 'America/Lima' }).set({
@@ -32,4 +32,28 @@ export const formatDateTime = (date: string) => {
 
   return combined.toUTC().toISO(); // para enviar en la request
 };
+
+
+/**
+ * Devuelve "YYYY-MM-DDT00:00:00.000Z" en UTC literal para la fecha dada (YYYY-MM-DD)
+ * @param dateOnly 
+ * @returns 
+ */
+export const toUtcStartOfDay = (dateOnly: string): string => {
+  return DateTime.fromISO(dateOnly, { zone: 'utc' })
+    .startOf('day')
+    .toFormat("yyyy-LL-dd'T'HH:mm:ss.SSS'Z'");
+};
+
+/**
+ * Devuelve "YYYY-MM-DDT23:59:59.999Z" en UTC literal para la fecha dada (YYYY-MM-DD).
+ * @param dateOnly 
+ * @returns 
+ */
+export const toUtcEndOfDay = (dateOnly: string): string => {
+  return DateTime.fromISO(dateOnly, { zone: 'utc' })
+    .endOf('day')
+    .toFormat("yyyy-LL-dd'T'HH:mm:ss.SSS'Z'");
+};
+
 

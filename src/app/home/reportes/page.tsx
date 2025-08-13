@@ -6,7 +6,7 @@ import ModalFilter from "@/components/modal/ModalFilter";
 import { deletedInvoiceByIdRequest, paginateInvoiceRequest } from "@/api/invoice";
 import { PaginateInvoiceParams } from "@/interface/invoice-interface";
 import ReactPaginate from 'react-paginate';
-import { formatDateTime } from "@/utils/dateUtils";
+import { formatDateTime, toUtcEndOfDay, toUtcStartOfDay } from "@/utils/dateUtils";
 import type { PopconfirmProps } from 'antd';
 import { Button, message, Popconfirm } from 'antd';
 
@@ -84,25 +84,37 @@ export default function Reporte() {
     }
 
     const handlePageClick = (event: { selected: number }) => {
-        setPage(event.selected + 1) 
+        setPage(event.selected + 1)
     };
-    const handleFilter = (filters: { startDate?: string; endDate?: string }) => {
-        console.log("Filtros recibidos en el padre:", filters);
-        setStartDate(filters.startDate || "")
-        setEndDate(filters.endDate || "")
-        setPage(1)
-        setShowModal(false)
-        console.log("start date :", startDate);
-        console.log("end date :", endDate);
-        fetchPaginateInvoices()
 
+
+    const handleFilter = (filters: { startDate?: string; endDate?: string }) => {
+        const s = filters.startDate ?? "";
+        const e = filters.endDate ?? "";
+
+        if (s && e) {
+            setStartDate(toUtcStartOfDay(s));   // "YYYY-MM-DDT00:00:00.000Z"
+            setEndDate(toUtcEndOfDay(e));       // "YYYY-MM-DDT23:59:59.999Z"
+        } else {
+            setStartDate("");
+            setEndDate("");
+        }
+        setPage(1);
+        setShowModal(false);
     }
+
+    const handleClear = () => {
+        setStartDate("");
+        setEndDate("");
+        setPage(1)
+    };
+
 
     const skeletonRows = Array.from({ length: perPage }, (_, index) => index)
 
     useEffect(() => {
         fetchPaginateInvoices()
-    }, [page, perPage, query, sort])
+    }, [page, perPage, query, sort, startDate, endDate])
 
 
     return (
@@ -233,6 +245,7 @@ export default function Reporte() {
                 showModal && <ModalFilter
                     onClose={onCloseModalFilter}
                     onFilter={handleFilter}
+                    onClear={handleClear}
                 />
             }
         </>

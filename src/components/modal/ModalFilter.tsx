@@ -1,40 +1,53 @@
-"use client"
-import { useState } from "react";
+"use client";
+import { useMemo, useState } from "react";
 import "./ModalFilter.css";
+import { toast } from "react-toastify";
 
 interface ModalFilterProps {
     onClose: () => void;
-    onFilter: (filters: { startDate?: string; endDate?: string }) => void
+    onFilter: (filters: { startDate?: string; endDate?: string }) => void;
+    onClear: () => void;
 }
 
+export default function ModalFilter({ onClose, onFilter, onClear }: ModalFilterProps) {
+    const [startDate, setStartDate] = useState<string>("");
+    const [endDate, setEndDate] = useState<string>("");
 
-
-
-
-
-export default function ModalFilter({ onClose, onFilter }: ModalFilterProps) {
-
-    const [startDate, setStartDate] = useState<string>("")
-    const [endDate, setEndDate] = useState<string>("")
+    const isValidRange = useMemo(() => {
+        if (!startDate || !endDate) return false;
+        return new Date(startDate) <= new Date(endDate);
+    }, [startDate, endDate]);
 
     const handleApplyFilter = () => {
-        console.log("Start Date:", startDate);
-        console.log("End Date:", endDate);
-        onFilter({ startDate, endDate })
-    }
+        if (!startDate || !endDate) {
+            toast.info("Debe seleccionar ambas fechas.")
+            return;
+        }
+        if (!isValidRange) {
+            toast.info("La fecha de inicio no puede ser mayor que la fecha fin.")
+            return;
+        }
+        onFilter({ startDate, endDate });
+    };
 
-
+    const handleClearFilter = () => {
+        setStartDate("");
+        setEndDate("");
+        onClear();
+        onClose();
+    };
     return (
         <div
             className="modal fade show d-block custom-modal-overlay"
             tabIndex={-1}
-            aria-labelledby="exampleModalLabel"
-            aria-hidden="true"
+            aria-labelledby="modalFilterLabel"
+            aria-modal="true"
+            role="dialog"
         >
-            <div className="modal-dialog modal-dialog-centered"> {/* centrado vertical */}
+            <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h1 className="modal-title fs-5" id="exampleModalLabel">
+                        <h1 className="modal-title fs-5" id="modalFilterLabel">
                             Filtrar Reporte
                         </h1>
                         <button
@@ -42,11 +55,11 @@ export default function ModalFilter({ onClose, onFilter }: ModalFilterProps) {
                             className="btn-close"
                             onClick={onClose}
                             aria-label="Close"
-                        ></button>
+                        />
                     </div>
 
                     <div className="modal-body d-flex gap-2 align-items-center justify-content-between">
-                        <div className="">
+                        <div>
                             <label className="form-label">Inicio de fecha</label>
                             <input
                                 type="date"
@@ -55,9 +68,10 @@ export default function ModalFilter({ onClose, onFilter }: ModalFilterProps) {
                                 required
                                 value={startDate}
                                 onChange={(e) => setStartDate(e.target.value)}
+                                max={endDate || undefined}
                             />
                         </div>
-                        <div className="">
+                        <div>
                             <label className="form-label">Fin de fecha</label>
                             <input
                                 type="date"
@@ -66,22 +80,28 @@ export default function ModalFilter({ onClose, onFilter }: ModalFilterProps) {
                                 required
                                 value={endDate}
                                 onChange={(e) => setEndDate(e.target.value)}
+                                min={startDate || undefined}
                             />
                         </div>
                     </div>
-
                     <div className="modal-footer">
                         <button
                             type="button"
-                            className="btn btn-secondary"
-                            onClick={onClose}
+                            className="btn btn-secondary me-auto"
+                            onClick={handleClearFilter}
+                            title="Quitar fechas y mostrar todos"
                         >
+                            LIMPIAR
+                        </button>
+                        <button type="button" className="btn btn-danger" onClick={onClose}>
                             CERRAR
                         </button>
                         <button
                             type="button"
                             className="btn btn-primary"
-                            onClick={handleApplyFilter}>
+                            onClick={handleApplyFilter}
+                            disabled={!isValidRange}
+                        >
                             FILTRAR
                         </button>
                     </div>
