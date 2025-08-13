@@ -17,12 +17,11 @@ export default function Reporte() {
     const [page, setPage] = useState<number>(1)
     const [perPage, setPerPage] = useState<number>(7)
     const [query, setQuery] = useState<string>("")
+    const [debouncedQuery, setDebouncedQuery] = useState<string>("");
     const [sort, setSort] = useState<string>("DESC")
-
 
     const [startDate, setStartDate] = useState<string>("");
     const [endDate, setEndDate] = useState<string>("");
-
 
     const [dataInvoice, setDataInvoice] = useState([])
     const [pages, setPages] = useState<number>(1)
@@ -41,6 +40,11 @@ export default function Reporte() {
     const onCloseModalFilter = () => {
         setShowModal(false)
     }
+
+
+    const handleQuery = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setQuery(e.target.value);
+    };
 
 
     const handleDelete = async (item: any) => {
@@ -64,7 +68,7 @@ export default function Reporte() {
             const payload: PaginateInvoiceParams = {
                 page,
                 perPage,
-                query,
+                query: debouncedQuery,
                 sort,
                 startDate,
                 endDate
@@ -112,37 +116,55 @@ export default function Reporte() {
 
     const skeletonRows = Array.from({ length: perPage }, (_, index) => index)
 
+    // --- debounce: 400ms, aplica si >4; limpia si vacío ---
+    useEffect(() => {
+        const txt = query.trim();
+        const t = setTimeout(() => {
+            if (txt.length === 0) {
+                setDebouncedQuery("");
+                setPage(1);
+            } else if (txt.length > 4) {
+                setDebouncedQuery(txt);
+                setPage(1);
+            }
+            // Si 1..4 caracteres, no cambia debouncedQuery (mantiene el último resultado).
+        }, 400);
+
+        return () => clearTimeout(t);
+    }, [query]);
+
+
     useEffect(() => {
         fetchPaginateInvoices()
-    }, [page, perPage, query, sort, startDate, endDate])
+    }, [page, perPage, debouncedQuery, sort, startDate, endDate])
 
 
     return (
         <>
             <div className="card-report-header mb-0 px-sm-2 px-md-2 py-0 py-sm-0 py-md-1 py-lg-1">
-                <form method="POST" action="/filterOrderByDate">
-                    <div className="row mb-0 mb-md-3">
-                        <div className="col-md-6 col-lg-5 d-flex align-items-center justify-content-center gap-1">
-                            <Link href="/home" className="btn btn-home">
-                                <i className="bi bi-house-fill icon-home"></i>
-                            </Link>
-                            <button className="btn btn-danger btn-export">
-                                EXPORTAR EN EXCEL
-                            </button>
-                            <button className="btn btn-danger btn-filter" onClick={openModalFilter}>
-                                FILTRAR
-                            </button>
-                        </div>
-                        <div className="col-md-6 col-lg-7">
-                            <input
-                                type="search"
-                                className="form-control input-form"
-                                name="textSearch"
-                                placeholder="BUSCAR"
-                            />
-                        </div>
+                <div className="row mb-0 mb-md-3">
+                    <div className="col-md-6 col-lg-5 d-flex align-items-center justify-content-center gap-1">
+                        <Link href="/home" className="btn btn-home">
+                            <i className="bi bi-house-fill icon-home"></i>
+                        </Link>
+                        <button className="btn btn-danger btn-export">
+                            EXPORTAR EN EXCEL
+                        </button>
+                        <button className="btn btn-danger btn-filter" onClick={openModalFilter}>
+                            FILTRAR
+                        </button>
                     </div>
-                </form>
+                    <div className="col-md-6 col-lg-7">
+                        <input
+                            type="search"
+                            className="form-control input-form"
+                            name="textSearch"
+                            placeholder="BUSCAR POR: Nro BOLETA-CLIENTE-TELEFONO"
+                            value={query}
+                            onChange={handleQuery}
+                        />
+                    </div>
+                </div>
             </div>
 
             <div className="card-report mb-2">
@@ -150,7 +172,7 @@ export default function Reporte() {
                     <table className="table table-hover">
                         <thead>
                             <tr>
-                                <th>DOCUMENTO</th>
+                                <th>NÚMERO</th>
                                 <th>CLIENTE</th>
                                 <th>FECHA</th>
                                 <th>TELEFONO</th>
@@ -159,46 +181,48 @@ export default function Reporte() {
                                 <th>ACCIÓN</th>
                             </tr>
                         </thead>
-                        <tbody className="t-body">{
-                            loadingPaginateInvoice ? (
+                        <tbody className="t-body">
+                            {loadingPaginateInvoice ? (
                                 skeletonRows.map((_, index) => (
                                     <tr key={`skeleton-${index}`}>
-                                        <td><div className="skeleton skeleton-text"></div></td>
-                                        <td><div className="skeleton skeleton-text"></div></td>
-                                        <td>
-                                            <div className="d-block skeleton skeleton-text"></div>
-                                        </td>
-                                        <td><div className="skeleton skeleton-text"></div></td>
-                                        <td><div className="skeleton skeleton-text"></div></td>
-                                        <td className="text-center"><div className="skeleton skeleton-text"></div></td>
+                                        <td><div className="skeleton skeleton-text" /></td>
+                                        <td><div className="skeleton skeleton-text" /></td>
+                                        <td><div className="d-block skeleton skeleton-text" /></td>
+                                        <td><div className="skeleton skeleton-text" /></td>
+                                        <td><div className="skeleton skeleton-text" /></td>
+                                        <td className="text-center"><div className="skeleton skeleton-text" /></td>
                                         <td className="text-center">
                                             <div className="content-action d-flex justify-content-center align-items-center">
-                                                <div className="btn btn-sm btn-pdf skeleton skeleton-btn"></div>
-                                                <div className="btn btn-sm btn-deleted skeleton skeleton-btn"></div>
+                                                <div className="btn btn-sm btn-pdf skeleton skeleton-btn" />
+                                                <div className="btn btn-sm btn-deleted skeleton skeleton-btn" />
                                             </div>
                                         </td>
                                     </tr>
                                 ))
-
+                            ) : dataInvoice.length === 0 ? (
+                                <tr>
+                                    <td colSpan={7}>
+                                        <div className="text-center py-4 text-muted">
+                                            <i className="bi bi-inbox me-2"></i>
+                                            No existen facturas para los filtros/búsqueda aplicados.
+                                        </div>
+                                    </td>
+                                </tr>
                             ) : (
                                 dataInvoice.map((item: any, index: number) => (
                                     <tr key={index}>
                                         <td>{item.number}</td>
                                         <td>{item.client}</td>
                                         <td>
-                                            <span className="d-block txt-date">
-                                                {formatDateTime(item.createdDate).date}
-                                            </span>
-                                            <span className="d-block txt-time">
-                                                {formatDateTime(item.createdDate).time}
-                                            </span>
+                                            <span className="d-block txt-date">{formatDateTime(item.createdDate).date}</span>
+                                            <span className="d-block txt-time">{formatDateTime(item.createdDate).time}</span>
                                         </td>
                                         <td>{item.phone}</td>
                                         <td>{item.address}</td>
-                                        <td className="text-center">S/ {item.saleprice}</td>
+                                        <td className="text-center">S/ {Number(item.saleprice ?? 0).toFixed(2)}</td>
                                         <td className="text-center">
                                             <div className="content-action d-flex justify-content-center align-items-center">
-                                                <button className="btn btn-sm btn-pdf">
+                                                <button className="btn btn-sm btn-pdf" type="button">
                                                     <i className="bi bi-file-earmark-pdf-fill icon-pdf"></i>
                                                 </button>
                                                 <Popconfirm
@@ -209,7 +233,7 @@ export default function Reporte() {
                                                     okText="Yes"
                                                     cancelText="No"
                                                 >
-                                                    <button className="btn  btn-sm btn-deleted">
+                                                    <button className="btn btn-sm btn-deleted" type="button">
                                                         <i className="bi bi-trash-fill icon-deleted"></i>
                                                     </button>
                                                 </Popconfirm>
@@ -217,10 +241,8 @@ export default function Reporte() {
                                         </td>
                                     </tr>
                                 ))
-                            )
-                        }
+                            )}
                         </tbody>
-
                     </table>
                 </div>
                 <ReactPaginate
