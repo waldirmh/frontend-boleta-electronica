@@ -9,8 +9,8 @@ import ReactPaginate from 'react-paginate';
 import { formatDateTime, toUtcEndOfDay, toUtcStartOfDay } from "@/utils/dateUtils";
 import type { PopconfirmProps } from 'antd';
 import { Popconfirm } from 'antd';
-import { getFilenameFromDisposition, saveBlob } from "@/utils/file";
 import { toast } from "react-toastify";
+import { getFilenameFromDisposition, saveBlob } from "@/utils/file";
 
 export default function Reporte() {
 
