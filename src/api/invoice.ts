@@ -19,6 +19,12 @@ export const deletedInvoiceByIdRequest = (id: string): Promise<any> => {
     return axios.delete(`/invoice/${encodeURIComponent(id)}`);
 }
 
+export const downloadPdfRequest = (id: string): Promise<any> => {
+    return axios.get(`/invoice/downloadPdf/${encodeURIComponent(id)}`, {
+        responseType: "blob"
+    });
+}
+
 
 
 

@@ -3,12 +3,14 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import "./Report.css"
 import ModalFilter from "@/components/modal/ModalFilter";
-import { deletedInvoiceByIdRequest, paginateInvoiceRequest } from "@/api/invoice";
+import { deletedInvoiceByIdRequest, downloadPdfRequest, paginateInvoiceRequest } from "@/api/invoice";
 import { PaginateInvoiceParams } from "@/interface/invoice-interface";
 import ReactPaginate from 'react-paginate';
 import { formatDateTime, toUtcEndOfDay, toUtcStartOfDay } from "@/utils/dateUtils";
 import type { PopconfirmProps } from 'antd';
-import { Button, message, Popconfirm } from 'antd';
+import { Popconfirm } from 'antd';
+import { getFilenameFromDisposition, saveBlob } from "@/utils/file";
+import { toast } from "react-toastify";
 
 export default function Reporte() {
 
@@ -19,13 +21,10 @@ export default function Reporte() {
     const [query, setQuery] = useState<string>("")
     const [debouncedQuery, setDebouncedQuery] = useState<string>("");
     const [sort, setSort] = useState<string>("DESC")
-
     const [startDate, setStartDate] = useState<string>("");
     const [endDate, setEndDate] = useState<string>("");
-
     const [dataInvoice, setDataInvoice] = useState([])
     const [pages, setPages] = useState<number>(1)
-
 
 
     const cancel: PopconfirmProps['onCancel'] = (e) => {
@@ -36,31 +35,41 @@ export default function Reporte() {
         setShowModal(true);
     };
 
-
     const onCloseModalFilter = () => {
         setShowModal(false)
     }
-
 
     const handleQuery = (e: React.ChangeEvent<HTMLInputElement>) => {
         setQuery(e.target.value);
     };
 
-
     const handleDelete = async (item: any) => {
         try {
             const res = await deletedInvoiceByIdRequest(item._id);
             if (res.status === 200) {
-                message.success(`Comprobante ${item.number} eliminado.`);
+                toast.success(`Comprobante ${item.number} eliminado.`);
                 await fetchPaginateInvoices();
             } else {
-                message.error("No se pudo eliminar el comprobante.");
+                toast.error("No se pudo eliminar el comprobante.")
             }
         } catch (err: any) {
-            message.error(err?.response?.data?.message ?? "Error al eliminar el comprobante.");
+            toast.error(err?.response?.data?.message ?? "Error al eliminar el comprobante.");
         } finally {
         }
     };
+
+    const handleDownloadPdf = async (item: any) => {
+        try {
+            const res = await downloadPdfRequest(item?._id);
+            const disposition = res.headers["content-disposition"] as string | undefined;
+            const fname = getFilenameFromDisposition(disposition) || `Proforma-${item.number}.pdf`;
+            saveBlob(res.data, fname);
+            toast.success(`PDF descargado: ${fname}`);
+        } catch (err: any) {
+            toast.error(err?.response?.data?.message ?? "No se pudo descargar el PDF.");
+        } finally {
+        }
+    }
 
     const fetchPaginateInvoices = async () => {
         setLoadingPaginateInvoice(true)
@@ -80,7 +89,7 @@ export default function Reporte() {
             }
         }
         catch (error) {
-            console.log("> Error:", error);
+            console.error("> Error:", error);
         }
         finally {
             setLoadingPaginateInvoice(false)
@@ -95,7 +104,6 @@ export default function Reporte() {
     const handleFilter = (filters: { startDate?: string; endDate?: string }) => {
         const s = filters.startDate ?? "";
         const e = filters.endDate ?? "";
-
         if (s && e) {
             setStartDate(toUtcStartOfDay(s));   // "YYYY-MM-DDT00:00:00.000Z"
             setEndDate(toUtcEndOfDay(e));       // "YYYY-MM-DDT23:59:59.999Z"
@@ -113,7 +121,6 @@ export default function Reporte() {
         setPage(1)
     };
 
-
     const skeletonRows = Array.from({ length: perPage }, (_, index) => index)
 
     // --- debounce: 400ms, aplica si >4; limpia si vacío ---
@@ -127,17 +134,13 @@ export default function Reporte() {
                 setDebouncedQuery(txt);
                 setPage(1);
             }
-            // Si 1..4 caracteres, no cambia debouncedQuery (mantiene el último resultado).
         }, 400);
-
         return () => clearTimeout(t);
     }, [query]);
-
 
     useEffect(() => {
         fetchPaginateInvoices()
     }, [page, perPage, debouncedQuery, sort, startDate, endDate])
-
 
     return (
         <>
@@ -222,7 +225,7 @@ export default function Reporte() {
                                         <td className="text-center">S/ {Number(item.saleprice ?? 0).toFixed(2)}</td>
                                         <td className="text-center">
                                             <div className="content-action d-flex justify-content-center align-items-center">
-                                                <button className="btn btn-sm btn-pdf" type="button">
+                                                <button className="btn btn-sm btn-pdf" type="button" onClick={() => handleDownloadPdf(item)}>
                                                     <i className="bi bi-file-earmark-pdf-fill icon-pdf"></i>
                                                 </button>
                                                 <Popconfirm
