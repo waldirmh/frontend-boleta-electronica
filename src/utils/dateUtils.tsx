@@ -1,5 +1,4 @@
 import { DateTime } from 'luxon';
-
 /**
  * Formatea una fecha ISO a formato peruano (DD/MM/YYYY y HH:mm en hora local).
  * @param date - Fecha en formato ISO (ej: "2025-04-23T18:00:52.497Z")
@@ -34,25 +33,22 @@ export const combineDateWithCurrentTime = (dateOnly: string): string => {
 };
 
 
-/**
- * Devuelve "YYYY-MM-DDT00:00:00.000Z" en UTC literal para la fecha dada (YYYY-MM-DD)
- * @param dateOnly 
- * @returns 
- */
+/** Inicio de día de Lima en UTC → ej: "2025-08-20T05:00:00.000Z" */
 export const toUtcStartOfDay = (dateOnly: string): string => {
-  return DateTime.fromISO(dateOnly, { zone: 'utc' })
-    .startOf('day')
+  return DateTime.fromISO(dateOnly, { zone: 'America/Lima' })
+    .startOf("day")
+    .toUTC()
     .toFormat("yyyy-LL-dd'T'HH:mm:ss.SSS'Z'");
 };
 
 /**
- * Devuelve "YYYY-MM-DDT23:59:59.999Z" en UTC literal para la fecha dada (YYYY-MM-DD).
- * @param dateOnly 
- * @returns 
+ * Devuelve el fin de día de Lima en UTC: "YYYY-MM-DDT04:59:59.999Z"
+ * (ej: 2025-08-23 en Lima => 2025-08-24T04:59:59.999Z en UTC)
  */
 export const toUtcEndOfDay = (dateOnly: string): string => {
-  return DateTime.fromISO(dateOnly, { zone: 'utc' })
-    .endOf('day')
+  return DateTime.fromISO(dateOnly, { zone: "America/Lima" })
+    .endOf("day")
+    .toUTC()
     .toFormat("yyyy-LL-dd'T'HH:mm:ss.SSS'Z'");
 };
 

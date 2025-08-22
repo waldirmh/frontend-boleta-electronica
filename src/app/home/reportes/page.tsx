@@ -102,11 +102,11 @@ export default function Reporte() {
 
 
     const handleFilter = (filters: { startDate?: string; endDate?: string }) => {
-        const s = filters.startDate ?? "";
-        const e = filters.endDate ?? "";
-        if (s && e) {
-            setStartDate(toUtcStartOfDay(s));   // "YYYY-MM-DDT00:00:00.000Z"
-            setEndDate(toUtcEndOfDay(e));       // "YYYY-MM-DDT23:59:59.999Z"
+        const startDate = filters.startDate ?? "";
+        const endDate = filters.endDate ?? "";
+        if (startDate && endDate) {
+            setStartDate(toUtcStartOfDay(startDate)); // "2025-08-13T00:00:00.000Z"
+            setEndDate(toUtcEndOfDay(endDate));       // "2025-08-24T04:59:59.999Z"
         } else {
             setStartDate("");
             setEndDate("");
