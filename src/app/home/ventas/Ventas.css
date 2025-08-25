@@ -6,9 +6,11 @@
   padding: 10px;
   overflow-x: inherit;
 }
+
 .btn {
   border-radius: 0px !important;
 }
+
 .select-number {
   height: 40px !important;
   font-size: 14px;
@@ -16,6 +18,7 @@
   margin: 10px auto;
   border-radius: 0px;
 }
+
 .input-form {
   height: 40px;
   width: 100%;
@@ -35,10 +38,12 @@
   font-weight: 500;
   color: green !important;
 }
+
 .table {
   min-width: 600px;
   margin-bottom: 2px;
 }
+
 .table thead,
 .table tfoot {
   display: table;
@@ -57,16 +62,19 @@
   width: 100%;
   table-layout: fixed;
 }
+
 .table-footer {
   position: sticky;
   bottom: 0;
   background-color: white;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
+
 .btn-deleted-sales {
   padding: 0px;
   max-height: 25px;
 }
+
 .icon-deleted {
   color: rgb(211, 150, 150);
   font-size: 20px;
@@ -78,30 +86,19 @@
   box-shadow: none !important;
   border-color: transparent !important;
 }
+
 .icon-deleted:hover {
   color: red;
   font-size: 20px;
   border: none;
 }
+
 .btn-finish {
   width: 122px;
   min-width: 110px;
 }
+
 .is-invalid {
   border-color: red !important;
   background-color: #ffe5e5;
 }
-
-/* .btn-deleted-sales:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
-} */
-
-/* 
-@media (max-width: 767px) {
-  .table {
-    min-width: 600px;
-  }
-}
-@media (min-width: 768px) {
-} */

@@ -1,17 +1,19 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./ModalFilter.css";
 import { toast } from "react-toastify";
 
 interface ModalFilterProps {
+    value: { startDate: string, endDate: string };
     onClose: () => void;
     onFilter: (filters: { startDate?: string; endDate?: string }) => void;
+    onReportExcel: any;
     onClear: () => void;
 }
 
-export default function ModalFilter({ onClose, onFilter, onClear }: ModalFilterProps) {
-    const [startDate, setStartDate] = useState<string>("");
-    const [endDate, setEndDate] = useState<string>("");
+export default function ModalFilter({ value, onClose, onFilter, onReportExcel, onClear }: ModalFilterProps) {
+    const [startDate, setStartDate] = useState<string>(value.startDate ?? "");
+    const [endDate, setEndDate] = useState<string>(value.endDate ?? "");
 
     const isValidRange = useMemo(() => {
         if (!startDate || !endDate) return false;
@@ -36,6 +38,23 @@ export default function ModalFilter({ onClose, onFilter, onClear }: ModalFilterP
         onClear();
         onClose();
     };
+    const handleExportExcel = () => {
+        if (!startDate || !endDate) {
+            toast.info("Debe seleccionar ambas fechas.")
+            return;
+        }
+        if (!isValidRange) {
+            toast.info("La fecha de inicio no puede ser mayor que la fecha fin.")
+            return;
+        }
+        onReportExcel({ startDate, endDate });
+    };
+
+    useEffect(() => {
+        setStartDate(value.startDate ?? "")
+        setEndDate(value.endDate ?? "")
+    }, [value.startDate, value.endDate])
+
     return (
         <div
             className="modal fade show d-block custom-modal-overlay"
@@ -85,26 +104,41 @@ export default function ModalFilter({ onClose, onFilter, onClear }: ModalFilterP
                         </div>
                     </div>
                     <div className="modal-footer">
-                        <button
-                            type="button"
-                            className="btn btn-secondary me-auto"
-                            onClick={handleClearFilter}
-                            title="Quitar fechas y mostrar todos"
-                        >
-                            LIMPIAR
-                        </button>
-                        <button type="button" className="btn btn-danger" onClick={onClose}>
-                            CERRAR
-                        </button>
-                        <button
-                            type="button"
-                            className="btn btn-primary"
-                            onClick={handleApplyFilter}
-                            disabled={!isValidRange}
-                        >
-                            FILTRAR
-                        </button>
+                        <div className="w-100 d-flex justify-content-center">
+                            <button
+                                type="button"
+                                className="btn btn-sky-blue"
+                                onClick={handleExportExcel}
+                                title="Exportar a Excel"
+                            >
+                                EXPORTAR EXCEL
+                            </button>
+                        </div>
+
                     </div>
+                    <div className="modal-footer flex-column align-items-center gap-3">
+                        {/* Fila 2: Limpiar + Filtrar */}
+                        <div className="w-100 d-flex justify-content-center gap-2">
+                            <button
+                                type="button"
+                                className="btn btn-red"
+                                onClick={handleClearFilter}
+                                title="Quitar fechas y mostrar todos"
+                            >
+                                LIMPIAR
+                            </button>
+
+                            <button
+                                type="button"
+                                className="btn btn-green"
+                                onClick={handleApplyFilter}
+                                disabled={!isValidRange}
+                            >
+                                FILTRAR
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./Report.css"
 import ModalFilter from "@/components/modal/ModalFilter";
 import { deletedInvoiceByIdRequest, downloadPdfRequest, paginateInvoiceRequest } from "@/api/invoice";
@@ -25,7 +25,9 @@ export default function Reporte() {
     const [endDate, setEndDate] = useState<string>("");
     const [dataInvoice, setDataInvoice] = useState([])
     const [pages, setPages] = useState<number>(1)
-
+    const [uiStartDate, setUiStartDate] = useState<string>("");
+    const [uiEndDate, setUiEndDate] = useState<string>("");
+    const [refetchKey, setRefetchKey] = useState(0);
 
     const cancel: PopconfirmProps['onCancel'] = (e) => {
     };
@@ -102,8 +104,9 @@ export default function Reporte() {
 
 
     const handleFilter = (filters: { startDate?: string; endDate?: string }) => {
-        const startDate = filters.startDate ?? "";
-        const endDate = filters.endDate ?? "";
+        const { startDate, endDate } = filters
+        setUiStartDate(startDate ?? "");
+        setUiEndDate(endDate ?? "")
         if (startDate && endDate) {
             setStartDate(toUtcStartOfDay(startDate)); // "2025-08-13T00:00:00.000Z"
             setEndDate(toUtcEndOfDay(endDate));       // "2025-08-24T04:59:59.999Z"
@@ -112,18 +115,46 @@ export default function Reporte() {
             setEndDate("");
         }
         setPage(1);
+        setRefetchKey((k) => k + 1);
+        setShowModal(false);
+    }
+
+    const handleGenerateExcel = (filters: { startDate?: string; endDate?: string }) => {
+        const { startDate, endDate } = filters
+        setUiStartDate(startDate ?? "");
+        setUiEndDate(endDate ?? "")
+        if (startDate && endDate) {
+            setStartDate(toUtcStartOfDay(startDate)); // "2025-08-13T00:00:00.000Z"
+            setEndDate(toUtcEndOfDay(endDate));       // "2025-08-24T04:59:59.999Z"
+        } else {
+            setStartDate("");
+            setEndDate("");
+        }
+        setPage(1);
+        setRefetchKey((k) => k + 1);
         setShowModal(false);
     }
 
     const handleClear = () => {
+        setUiStartDate("")
+        setUiEndDate("")
         setStartDate("");
         setEndDate("");
-        setPage(1)
+        setRefetchKey((k) => k + 1);
+        setPage(1);
     };
+
+    const modalValue = useMemo(
+        () => ({
+            startDate: uiStartDate,
+            endDate: uiEndDate
+        }),
+        [uiStartDate, uiEndDate]
+    )
 
     const skeletonRows = Array.from({ length: perPage }, (_, index) => index)
 
-    // --- debounce: 400ms, aplica si >4; limpia si vacío ---
+    // --- debounce: 400ms, aplica si txt >4; limpia si vacío ---
     useEffect(() => {
         const txt = query.trim();
         const t = setTimeout(() => {
@@ -140,24 +171,21 @@ export default function Reporte() {
 
     useEffect(() => {
         fetchPaginateInvoices()
-    }, [page, perPage, debouncedQuery, sort, startDate, endDate])
+    }, [page, perPage, debouncedQuery, sort, startDate, endDate, refetchKey])
 
     return (
         <>
             <div className="card-report-header mb-0 px-sm-2 px-md-2 py-0 py-sm-0 py-md-1 py-lg-1">
                 <div className="row mb-0 mb-md-3">
-                    <div className="col-md-6 col-lg-5 d-flex align-items-center justify-content-center gap-1">
+                    <div className="col-md-2 col-lg-3 d-flex align-items-center justify-content-between gap-1">
                         <Link href="/home" className="btn btn-home">
                             <i className="bi bi-house-fill icon-home"></i>
                         </Link>
-                        <button className="btn btn-danger btn-export">
-                            EXPORTAR EN EXCEL
-                        </button>
-                        <button className="btn btn-danger btn-filter" onClick={openModalFilter}>
+                        <button className="btn btn-green btn-filter" onClick={openModalFilter}>
                             FILTRAR
                         </button>
                     </div>
-                    <div className="col-md-6 col-lg-7">
+                    <div className="col-md-10 col-lg-9">
                         <input
                             type="search"
                             className="form-control input-form"
@@ -268,8 +296,10 @@ export default function Reporte() {
             </div>
             {
                 showModal && <ModalFilter
+                    value={{ startDate: modalValue.startDate, endDate: modalValue.endDate }}
                     onClose={onCloseModalFilter}
                     onFilter={handleFilter}
+                    onReportExcel={handleGenerateExcel}
                     onClear={handleClear}
                 />
             }

@@ -220,7 +220,7 @@ export default function Ventas() {
                             onChange={(e) => setItemInvoice({ ...itemInvoice, description: e.target.value })}
                             required
                         />
-                        <button className="btn btn-danger clock w-100 mt-2" onClick={handleAddItem}>
+                        <button className="btn btn-green clock w-100 mt-2" onClick={handleAddItem}>
                             AGREGAR
                         </button>
                     </div>
@@ -265,10 +265,10 @@ export default function Ventas() {
                                     </tr>
                                 </tfoot>
                             </table>
-                        </div>
+                        </div>btn-green
                     </div>
                     <div className="float-end d-flex gap-2">
-                        <button className="btn btn-danger btn-finish mt-3 d-flex justify-content-center align-items-center"
+                        <button className="btn btn-green mt-3 d-flex justify-content-center align-items-center"
                             onClick={handleCreateInvoice}
                             disabled={loadingSpinner}
                         >
@@ -279,7 +279,7 @@ export default function Ventas() {
                             )}
                             <span className={`${loadingSpinner ? 'd-none' : 'd-block'}`}>FINALIZAR</span>
                         </button>
-                        <button className="btn btn-outline-danger mt-3" onClick={cancelInvoice}>
+                        <button className="btn btn-red mt-3" onClick={cancelInvoice}>
                             CANCELAR
                         </button>
                     </div>

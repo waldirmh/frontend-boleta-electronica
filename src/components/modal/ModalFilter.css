@@ -1,15 +1,17 @@
+/* .input-form {
+  height: 40px;
+  width: 100%;
+  font-size: 14px;
+  padding: 10px;
+  margin: 10px auto;
+  border-radius: 0px;
+}
 
-.input-form {
-    height: 40px;
-    width: 100%;
-    font-size: 14px;
-    padding: 10px;
-    margin: 10px auto;
-    border-radius: 0px;
-  }
-  
-  .input-form:focus {
-    border: none;
-    outline: none;
-  }
-  
+.input-form:focus {
+  border: none;
+  outline: none;
+} */
+
+/* .btn-filter {
+  background: var(--bg-green);
+} */

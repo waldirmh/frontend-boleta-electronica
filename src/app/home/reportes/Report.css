@@ -69,7 +69,7 @@
 }
 
 .btn-home {
-  font-size: 25px;
+  font-size: 30px;
 }
 
 .btn-pdf .btn-deleted {
@@ -77,10 +77,9 @@
   max-height: 25px;
 }
 
-.btn-filter,
-.btn-export {
-  padding: 5px !important;
-  font-size: 14px !important;
+.btn-filter {
+  width: 100%;
+  max-width: 180px;
 }
 
 .icon-deleted {
@@ -104,8 +103,8 @@
 }
 
 .icon-home:hover {
-  color: rgb(5, 82, 5);
-  font-size: 25px;
+  color: var(--bg-green);
+  font-size: 30px;
   border: none;
 }
 
