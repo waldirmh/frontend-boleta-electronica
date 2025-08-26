@@ -98,16 +98,19 @@ export default function Signin() {
             <div className="d-grid gap-2">
               <button
                 type="button"
-                className="btn btn-primary mt-4 d-flex justify-content-center align-items-center gap-2 btn-signin"
+                className="btn btn-red mt-4 d-flex justify-content-center align-items-center gap-2 btn-signin"
                 onClick={handleLogin}
-                disabled={loadingSpinner}
+                aria-busy={loadingSpinner}
+                aria-live="polite"
               >
-                {loadingSpinner && (
-                  <Spin
-                    indicator={<LoadingOutlined style={{ fontSize: 20, color: "white" }} spin />}
-                  />
+                {loadingSpinner ? (
+                  <>
+                    <Spin indicator={<LoadingOutlined style={{ fontSize: 20, color: "white" }} spin />} />
+                    <span>INICIANDO...</span>
+                  </>
+                ) : (
+                  <span>INICIAR SESIÓN</span>
                 )}
-                <span className={`${loadingSpinner ? 'd-none' : 'd-block'}`}> INICIAR SESIÓN</span>
               </button>
             </div>
             <div className='mt-4 fs-6 '>

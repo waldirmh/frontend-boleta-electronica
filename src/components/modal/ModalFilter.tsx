@@ -117,7 +117,6 @@ export default function ModalFilter({ value, onClose, onFilter, onReportExcel, o
 
                     </div>
                     <div className="modal-footer flex-column align-items-center gap-3">
-                        {/* Fila 2: Limpiar + Filtrar */}
                         <div className="w-100 d-flex justify-content-center gap-2">
                             <button
                                 type="button"

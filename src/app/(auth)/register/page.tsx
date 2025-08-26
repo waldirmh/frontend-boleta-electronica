@@ -32,11 +32,11 @@ export default function Register() {
       const response = await signup(userData);
       if (response && response.status === 201) {
         toast.success("Usuario Registrado")
-        router.push("/")
+        router.replace("/")
       }
     } catch (error: any) {
       const message = error.response?.data.error.message
-      console.log("> message error signup:", message);
+      console.error("> message error signup:", message);
     }
     finally {
       setLoadingRegister(false)
@@ -58,7 +58,6 @@ export default function Register() {
         handleRegister();
       }
     };
-
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
@@ -116,14 +115,20 @@ export default function Register() {
             </div>
             <div className="d-grid gap-2">
               <button
-                className="btn btn-primary mt-4 d-flex justify-content-center align-items-center gap-2 btn-signup"
+                className="btn btn-red mt-4 d-flex justify-content-center align-items-center gap-2 btn-signup"
                 onClick={handleRegister}
-                disabled={loadingRegister}
+                aria-busy={loadingRegister}
+                aria-live="polite"
               >
-                {loadingRegister && <Spin indicator={<LoadingOutlined style={{ fontSize: 20, color: "white" }} spin />} />}
-                <span className={`${loadingRegister ? 'd-none' : 'd-block'}`}> REGISTRAR</span>
+                {loadingRegister ? (
+                  <>
+                    <Spin indicator={<LoadingOutlined style={{ fontSize: 20, color: "white" }} spin />} />
+                    <span> REGISTRANDO...</span>
+                  </>)
+                  : (
+                    <span> REGISTRAR</span>
+                  )}
               </button>
-
             </div>
             <div className="mt-3 fs-6">
               <Link href="/" className="text-light txt-iniciar-sesion">

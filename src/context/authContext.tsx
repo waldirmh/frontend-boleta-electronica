@@ -3,11 +3,8 @@
 import { createContext, useContext, useEffect, useState, ReactNode, } from 'react';
 import { loginRequest, registerRequest } from '@/api/auth';
 import { useRouter } from 'next/navigation';
-import {
-    AuthContextType, UserLoginDTO, UserRegisterDTO, User, JwtPayload
-} from '@/interface/auth-interface';
+import { AuthContextType, UserLoginDTO, UserRegisterDTO, User, JwtPayload } from '@/interface/auth-interface';
 import { jwtDecode } from 'jwt-decode';
-import { toast } from 'react-toastify';
 // Inicialización del contexto
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -30,14 +27,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const signup = async (user: UserRegisterDTO) => {
         try {
-            const res = await registerRequest(user);
-            if (res && res.status === 201) {
-                const { user, token } = res.data
-                localStorage.setItem("token", token)
-                setUser(user);
-                setIsAuthenticated(true);
-                return res;
-            }
+            return await registerRequest(user);
         } catch (error: any) {
             const message = error.response?.data?.error?.message
             setErrors([message]);
@@ -67,7 +57,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         localStorage.removeItem('invoice');
         setUser(null);
         setIsAuthenticated(false);
-        router.push('/');
+        router.replace('/');
     };
 
     // Verifica si el token está expirado
