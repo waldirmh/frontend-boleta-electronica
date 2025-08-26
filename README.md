@@ -24,8 +24,8 @@ App web que permite
 - Bootstrap 5
 
 ## Support 
-Gmmail [waldirmendozahuaman887@gmail.com](waldirmendozahuaman887@gmail.com) 
-Whatsapp [+51 979326277]
+- Gmail [waldirmendozahuaman887@gmail.com](waldirmendozahuaman887@gmail.com) 
+- Whatsapp [+51 979326277]
 
 ## Author
 WALDIR MENDOZA HUAMÁN
