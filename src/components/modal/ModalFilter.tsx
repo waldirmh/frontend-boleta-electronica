@@ -2,35 +2,41 @@
 import { useEffect, useMemo, useState } from "react";
 import "./ModalFilter.css";
 import { toast } from "react-toastify";
+import { Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 
 interface ModalFilterProps {
     value: { startDate: string, endDate: string };
     onClose: () => void;
     onFilter: (filters: { startDate?: string; endDate?: string }) => void;
-    onReportExcel: any;
+    onReportExcel: (filters: { startDate?: string; endDate?: string }) => void;
     onClear: () => void;
+    loading: boolean
 }
 
-export default function ModalFilter({ value, onClose, onFilter, onReportExcel, onClear }: ModalFilterProps) {
+export default function ModalFilter({ value, onClose, onFilter, onReportExcel, onClear, loading }: ModalFilterProps) {
     const [startDate, setStartDate] = useState<string>(value.startDate ?? "");
     const [endDate, setEndDate] = useState<string>(value.endDate ?? "");
 
     const isValidRange = useMemo(() => {
         if (!startDate || !endDate) return false;
-        return new Date(startDate) <= new Date(endDate);
+        return startDate <= endDate;
     }, [startDate, endDate]);
 
-    const handleApplyFilter = () => {
-        if (!startDate || !endDate) {
-            toast.info("Debe seleccionar ambas fechas.")
-            return;
-        }
-        if (!isValidRange) {
-            toast.info("La fecha de inicio no puede ser mayor que la fecha fin.")
-            return;
-        }
-        onFilter({ startDate, endDate });
+    const guard = (fn: () => void) => {
+        if (!startDate || !endDate) return toast.info("Debe seleccionar ambas fechas.");
+        if (!isValidRange) return toast.info("La fecha de inicio no puede ser mayor que la fecha fin.");
+        fn();
     };
+
+    const handleApplyFilter = () => guard(() => {
+        onFilter({ startDate, endDate });
+        onClose();
+    });
+
+    const handleExportExcel = () => guard(() => {
+        onReportExcel({ startDate, endDate });
+    });
 
     const handleClearFilter = () => {
         setStartDate("");
@@ -38,17 +44,7 @@ export default function ModalFilter({ value, onClose, onFilter, onReportExcel, o
         onClear();
         onClose();
     };
-    const handleExportExcel = () => {
-        if (!startDate || !endDate) {
-            toast.info("Debe seleccionar ambas fechas.")
-            return;
-        }
-        if (!isValidRange) {
-            toast.info("La fecha de inicio no puede ser mayor que la fecha fin.")
-            return;
-        }
-        onReportExcel({ startDate, endDate });
-    };
+
 
     useEffect(() => {
         setStartDate(value.startDate ?? "")
@@ -110,8 +106,17 @@ export default function ModalFilter({ value, onClose, onFilter, onReportExcel, o
                                 className="btn btn-sky-blue"
                                 onClick={handleExportExcel}
                                 title="Exportar a Excel"
+                                disabled={!isValidRange}
                             >
-                                EXPORTAR EXCEL
+                                {loading ? (
+                                    <>
+                                        <Spin indicator={<LoadingOutlined className="spin" spin />} />
+                                        <span> EXPORTANDO...</span>
+                                    </>)
+                                    : (
+                                        <span>EXPORTAR EXCEL</span>
+                                    )}
+
                             </button>
                         </div>
 

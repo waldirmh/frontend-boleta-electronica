@@ -105,7 +105,7 @@ export default function Signin() {
               >
                 {loadingSpinner ? (
                   <>
-                    <Spin indicator={<LoadingOutlined style={{ fontSize: 20, color: "white" }} spin />} />
+                    <Spin indicator={<LoadingOutlined className='spin' spin />} />
                     <span>INICIANDO...</span>
                   </>
                 ) : (

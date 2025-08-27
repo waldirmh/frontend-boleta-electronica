@@ -9,7 +9,6 @@ import { toast } from "react-toastify";
 import { Spin } from "antd";
 import { LoadingOutlined } from '@ant-design/icons';
 import { combineDateWithCurrentTime } from "@/utils/dateUtils";
-
 import type { DatePickerProps } from 'antd';
 import { DatePicker } from 'antd';
 
@@ -265,22 +264,24 @@ export default function Ventas() {
                                     </tr>
                                 </tfoot>
                             </table>
-                        </div>btn-green
+                        </div>
                     </div>
                     <div className="float-end d-flex gap-2">
+                        <button className="btn btn-red mt-3" onClick={cancelInvoice}>
+                            CANCELAR
+                        </button>
                         <button className="btn btn-green mt-3 d-flex justify-content-center align-items-center"
                             onClick={handleCreateInvoice}
                             disabled={loadingSpinner}
                         >
-                            {loadingSpinner && (
-                                <Spin
-                                    indicator={<LoadingOutlined style={{ fontSize: 20, color: "white" }} spin />}
-                                />
-                            )}
-                            <span className={`${loadingSpinner ? 'd-none' : 'd-block'}`}>FINALIZAR</span>
-                        </button>
-                        <button className="btn btn-red mt-3" onClick={cancelInvoice}>
-                            CANCELAR
+                            {loadingSpinner ? (
+                                <>
+                                    <Spin indicator={<LoadingOutlined className="spin" spin />} />
+                                    <span> CREANDO...</span>
+                                </>)
+                                : (
+                                    <span> CREAR FACTURA</span>
+                                )}
                         </button>
                     </div>
                 </div>

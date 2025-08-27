@@ -1,4 +1,6 @@
 :root {
+
+  --bg-modal-primary: #f5f5f5;
   /* PRIMARY */
   --btn-bg-primary: #12f337;
   --btn-txt-primary: rgb(46, 0, 212);
@@ -77,5 +79,14 @@
   background: var(--btn-bg-hover-tertiary);
   box-shadow: 0px 2px 3px var(--color-box-shadow-tertiary);
   color: var(--btn-txt-tertiary);
-  font-weight: 500;
+}
+
+.btn:disabled {
+  background-color: var(--btn-bg-tertiary);
+}
+
+/* SPIN */
+.spin {
+  font-size: 20px;
+  color: white;
 }

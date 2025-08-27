@@ -1,11 +1,8 @@
-
-
 export interface Invoice {
     number: string;
     phone: string;
     validate: string;
-    createdDate: string; // string ISO
-    // createdDate: Date | null;
+    createdDate: string;
     client: string;
     address: string;
     items: Item[];
@@ -33,5 +30,8 @@ export interface PaginateInvoiceParams {
     sort?: string;
     startDate?: string;
     endDate?: string;
-
+}
+export interface ReportInvoiceParams {
+    startDate?: string;
+    endDate?: string;
 }

@@ -3,8 +3,8 @@ import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
 import "./Report.css"
 import ModalFilter from "@/components/modal/ModalFilter";
-import { deletedInvoiceByIdRequest, downloadPdfRequest, paginateInvoiceRequest } from "@/api/invoice";
-import { PaginateInvoiceParams } from "@/interface/invoice-interface";
+import { deletedInvoiceByIdRequest, downloadPdfRequest, downloadReportRequest, paginateInvoiceRequest } from "@/api/invoice";
+import { PaginateInvoiceParams, ReportInvoiceParams } from "@/interface/invoice-interface";
 import ReactPaginate from 'react-paginate';
 import { formatDateTime, toUtcEndOfDay, toUtcStartOfDay } from "@/utils/dateUtils";
 import type { PopconfirmProps } from 'antd';
@@ -16,6 +16,7 @@ export default function Reporte() {
 
     const [showModal, setShowModal] = useState<boolean>(false)
     const [loadingPaginateInvoice, setLoadingPaginateInvoice] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false)
     const [page, setPage] = useState<number>(1)
     const [perPage, setPerPage] = useState<number>(7)
     const [query, setQuery] = useState<string>("")
@@ -30,6 +31,10 @@ export default function Reporte() {
     const [refetchKey, setRefetchKey] = useState(0);
 
     const cancel: PopconfirmProps['onCancel'] = (e) => {
+    };
+
+    const handlePageClick = (event: { selected: number }) => {
+        setPage(event.selected + 1)
     };
 
     const openModalFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -62,6 +67,7 @@ export default function Reporte() {
 
     const handleDownloadPdf = async (item: any) => {
         try {
+            setLoading(true)
             const res = await downloadPdfRequest(item?._id);
             const disposition = res.headers["content-disposition"] as string | undefined;
             const fname = getFilenameFromDisposition(disposition) || `Proforma-${item.number}.pdf`;
@@ -70,6 +76,7 @@ export default function Reporte() {
         } catch (err: any) {
             toast.error(err?.response?.data?.message ?? "No se pudo descargar el PDF.");
         } finally {
+            setLoading(false)
         }
     }
 
@@ -98,11 +105,6 @@ export default function Reporte() {
         }
     }
 
-    const handlePageClick = (event: { selected: number }) => {
-        setPage(event.selected + 1)
-    };
-
-
     const handleFilter = (filters: { startDate?: string; endDate?: string }) => {
         const { startDate, endDate } = filters
         setUiStartDate(startDate ?? "");
@@ -119,20 +121,35 @@ export default function Reporte() {
         setShowModal(false);
     }
 
-    const handleGenerateExcel = (filters: { startDate?: string; endDate?: string }) => {
-        const { startDate, endDate } = filters
-        setUiStartDate(startDate ?? "");
-        setUiEndDate(endDate ?? "")
-        if (startDate && endDate) {
-            setStartDate(toUtcStartOfDay(startDate)); // "2025-08-13T00:00:00.000Z"
-            setEndDate(toUtcEndOfDay(endDate));       // "2025-08-24T04:59:59.999Z"
-        } else {
-            setStartDate("");
-            setEndDate("");
+    const handleGenerateExcel = async (filters: { startDate?: string; endDate?: string }) => {
+        try {
+            setLoading(true)
+            const { startDate, endDate } = filters
+            setUiStartDate(startDate ?? "");
+            setUiEndDate(endDate ?? "")
+            if (startDate && endDate) {
+                const payload: ReportInvoiceParams = {
+                    startDate: toUtcStartOfDay(startDate),
+                    endDate: toUtcEndOfDay(endDate)
+                }
+                const response = await downloadReportRequest(payload)
+                if (response && response.status === 200) {
+                    const disposition = response.headers["content-disposition"] as string | undefined;
+                    const fname = getFilenameFromDisposition(disposition) || `Reporte.xlxs`;
+                    saveBlob(response.data, fname);
+                    toast.success('Reporte Generado.');
+                    onCloseModalFilter()
+                }
+            }
         }
-        setPage(1);
-        setRefetchKey((k) => k + 1);
-        setShowModal(false);
+        catch (error: any) {
+            toast.error(error?.response?.data?.message ?? "Problemas al generar el Reporte.");
+        }
+        finally {
+            setLoading(false)
+            onCloseModalFilter()
+
+        }
     }
 
     const handleClear = () => {
@@ -301,6 +318,7 @@ export default function Reporte() {
                     onFilter={handleFilter}
                     onReportExcel={handleGenerateExcel}
                     onClear={handleClear}
+                    loading={loading}
                 />
             }
         </>

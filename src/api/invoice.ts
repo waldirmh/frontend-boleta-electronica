@@ -1,6 +1,6 @@
 
 import axios from "./axios"
-import { Invoice, PaginateInvoiceParams } from "@/interface/invoice-interface"
+import { Invoice, PaginateInvoiceParams, ReportInvoiceParams } from "@/interface/invoice-interface"
 
 export const createInvoiceRequest = async (invoice: Invoice): Promise<any> => {
     return axios.post('/invoice/createinvoice', invoice)
@@ -23,6 +23,11 @@ export const downloadPdfRequest = (id: string): Promise<any> => {
     return axios.get(`/invoice/downloadPdf/${encodeURIComponent(id)}`, {
         responseType: "blob"
     });
+}
+
+export const downloadReportRequest = (
+    params: ReportInvoiceParams): Promise<any> => {
+    return axios.get('/invoice/report', { params, responseType: 'blob' });
 }
 
 
