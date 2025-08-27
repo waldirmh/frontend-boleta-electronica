@@ -13,7 +13,7 @@ import imageIsuzu from '@/assets/img/isuzu.png';
 
 export default function Footer() {
   return (
-    <footer className="footer mt-auto mb-3">
+    <footer className="footer mt-1 mb-0">
       <div className="container d-flex justify-content align-items-center border-top pt-3">
         <ul className="list-group list-group-horizontal ms-auto align-items-center">
           <li className="list-group me-3 d-flex align-items-center">
@@ -44,7 +44,7 @@ export default function Footer() {
             <Image className="img img-fluid custom-img-size" src={imageIsuzu} alt="logo isuzu" width={50} height={50} />
           </li>
         </ul>
-        <p className="text-end text-light w-100 txt">
+        <p className="text-end text-light w-100 txt m-0">
           2025 &copy; Todos los Derechos Reservados
         </p>
       </div>

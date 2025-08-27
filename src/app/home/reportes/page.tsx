@@ -18,7 +18,7 @@ export default function Reporte() {
     const [loadingPaginateInvoice, setLoadingPaginateInvoice] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
     const [page, setPage] = useState<number>(1)
-    const [perPage, setPerPage] = useState<number>(7)
+    const [perPage, setPerPage] = useState<number>(8)
     const [query, setQuery] = useState<string>("")
     const [debouncedQuery, setDebouncedQuery] = useState<string>("");
     const [sort, setSort] = useState<string>("DESC")
@@ -194,7 +194,7 @@ export default function Reporte() {
         <>
             <div className="card-report-header mb-0 px-sm-2 px-md-2 py-0 py-sm-0 py-md-1 py-lg-1">
                 <div className="row mb-0 mb-md-3">
-                    <div className="col-md-2 col-lg-3 d-flex align-items-center justify-content-between gap-1">
+                    <div className="col-sm-4 col-md-3 col-lg-3 d-flex align-items-center justify-content-between gap-md-1">
                         <Link href="/home" className="btn btn-home">
                             <i className="bi bi-house-fill icon-home"></i>
                         </Link>
@@ -202,7 +202,7 @@ export default function Reporte() {
                             FILTRAR
                         </button>
                     </div>
-                    <div className="col-md-10 col-lg-9">
+                    <div className="col-sm-8 col-md-9 col-lg-9">
                         <input
                             type="search"
                             className="form-control input-form"
@@ -214,7 +214,6 @@ export default function Reporte() {
                     </div>
                 </div>
             </div>
-
             <div className="card-report mb-2">
                 <div className="table-responsive">
                     <table className="table table-hover">

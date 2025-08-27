@@ -38,6 +38,13 @@
   min-height: 100vh;
 }
 
+main {
+  max-height: 577px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
 .Toastify__toast-container {
   z-index: 9999 !important;
 }
