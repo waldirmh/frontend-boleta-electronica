@@ -1,10 +1,10 @@
 'use client';
-
-import { createContext, useContext, useEffect, useState, ReactNode, } from 'react';
-import { loginRequest, registerRequest } from '@/api/auth';
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback, } from 'react';
 import { useRouter } from 'next/navigation';
-import { AuthContextType, UserLoginDTO, UserRegisterDTO, User, JwtPayload } from '@/interface/auth-interface';
-import { jwtDecode } from 'jwt-decode';
+import { AuthContextType, UserLoginDTO, UserRegisterDTO, User, } from '@/interface/auth-interface';
+import { toast } from 'react-toastify';
+import { AuthService } from '@/services/auth/AuthService';
+import { decodeToken, isTokenNearExpiry } from '@/utils/tokenUtils';
 // Inicialización del contexto
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -25,9 +25,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [loading, setLoading] = useState<boolean>(true);
     const router = useRouter();
 
-    const signup = async (user: UserRegisterDTO) => {
+    // Función para limpiar el estado de autenticación
+    const clearAuthState = useCallback(() => {
+        setUser(null);
+        setIsAuthenticated(false);
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('invoice');
+    }, []);
+
+    // Función para registrar usuario
+    const signup = async (userData: UserRegisterDTO) => {
         try {
-            return await registerRequest(user);
+            return await AuthService.registerRequest(userData);
         } catch (error: any) {
             const message = error.response?.data?.error?.message
             setErrors([message]);
@@ -35,13 +45,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const signin = async (user: UserLoginDTO) => {
+    // función para iniciar sesión
+    const signin = async (userData: UserLoginDTO) => {
         try {
-            const res = await loginRequest(user)
+            const res = await AuthService.loginRequest(userData)
             if (res && res.status === 200) {
-                const { user, token } = res.data
-                localStorage.setItem("token", token)
-                setUser(user)
+                const { accessToken, refreshToken } = res.data
+                localStorage.setItem("accessToken", accessToken)
+                localStorage.setItem("refreshToken", refreshToken)
                 setIsAuthenticated(true);
                 return res
             }
@@ -52,55 +63,76 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     }
 
+    // función logout
     const logout = async () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('invoice');
-        setUser(null);
-        setIsAuthenticated(false);
+        clearAuthState()
         router.replace('/');
     };
 
-    // Verifica si el token está expirado
-    const checkToken = () => {
-        const token = localStorage.getItem('token');
+    // Función para refrescar el token (verificar estado actual)
+    const refreshToken = async () => {
+        const refreshToken = localStorage.getItem('refreshToken');
+        if (!refreshToken) {
+            logout()
+            return
+        }
+        try {
+            const response = await AuthService.refreshTokenRequest({refreshToken});
+            const { token: newToken } = response.data;
+            localStorage.setItem('accessToken', newToken);
+            const result = decodeToken(newToken);
+            if (result.isValid && result.user) {
+                setUser(result.user);
+                setIsAuthenticated(true);
+            } else {
+                logout();
+            }
+        } catch (error: any) {
+            console.error('>Error renovando token: ', error);
+            logout();
+        }
+    };
+
+    // Verificar token al cargar la aplicación
+    const checkToken = useCallback(() => {
+        const token = localStorage.getItem('accessToken'); // clave corregida
         if (token) {
-            try {
-                const decoded = jwtDecode<JwtPayload>(token);
-                const isExpired = decoded.exp * 1000 < Date.now();
-                if (isExpired) {
-                    console.log('Token expirado. Cerrando sesión...');
-                    logout();
-                } else {
-                    setUser({
-                        _id: decoded._id,
-                        email: decoded.email,
-                        role: decoded.role,
-                    });
-                    setIsAuthenticated(true);
+            const tokenResult = decodeToken(token);
+            if (tokenResult.isValid && tokenResult.user) {
+                setUser(tokenResult.user);
+                setIsAuthenticated(true);
+                if (isTokenNearExpiry(token)) {
+                    console.warn('Token próximo a expirar');
+                    refreshToken();
                 }
-            } catch (err) {
-                console.log('Token inválido. Cerrando sesión...');
+            } else {
+                if (tokenResult.isExpired) {
+                    toast.info('Tu sesión ha expirado. Inicia sesión nuevamente.');
+                }
                 logout();
             }
         } else {
             logout();
         }
         setLoading(false);
-    };
+    }, [clearAuthState, logout, refreshToken]);
 
+    // Verificar token al montar el componente
     useEffect(() => {
         checkToken();
     }, []);
 
-
+    // Verificar token periódicamente (cada 5 minutos)
     useEffect(() => {
-        const token = localStorage.getItem('token')
-        if (token) {
-            setIsAuthenticated(true)
+        if (isAuthenticated) {
+            const interval = setInterval(() => {
+                refreshToken();
+            }, 1 * 60 * 1000); // 1 minutos
+            return () => clearInterval(interval);
         }
-        setLoading(false)
-    }, [])
+    }, [isAuthenticated, refreshToken]);
 
+    // Limpiar errores después de 5 segundos
     useEffect(() => {
         if (errors.length > 0) {
             const timer = setTimeout(() => {

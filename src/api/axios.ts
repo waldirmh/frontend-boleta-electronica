@@ -2,14 +2,14 @@ import axios from "axios";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const instance = axios.create({
+const apiClient = axios.create({
   baseURL: API_URL,
   withCredentials: true,
 });
 
-instance.interceptors.request.use(
+apiClient.interceptors.request.use(
   (config) => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -18,4 +18,4 @@ instance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-export default instance;
+export default apiClient;
