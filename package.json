@@ -10,22 +10,22 @@
   },
   "dependencies": {
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
-    "antd": "^5.24.6",
-    "axios": "^1.8.4",
-    "bootstrap": "^5.3.5",
-    "bootstrap-icons": "^1.11.3",
+    "antd": "^5.27.4",
+    "axios": "^1.12.2",
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
     "jwt-decode": "^4.0.0",
-    "luxon": "^3.6.1",
-    "next": "15.2.4",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "luxon": "^3.7.2",
+    "next": "15.5.5",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "react-paginate": "^8.3.0",
     "react-toastify": "^11.0.5"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "typescript": "^5"
+    "@types/node": "^24.7.2",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "typescript": "^5.9.3"
   }
 }

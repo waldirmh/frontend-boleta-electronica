@@ -5,7 +5,7 @@ Boleta Eléctrónica
 
 ## Requirements 
 
-- Versión Node: 18.20.7
+- Versión Node: 22.x
 - Run dev : npm run dev
 - Run prod : npm run start
 
@@ -24,8 +24,8 @@ App web que permite
 - Bootstrap 5
 
 ## Support 
-- Gmail [waldirmendozahuaman887@gmail.com](waldirmendozahuaman887@gmail.com) 
-- Whatsapp [+51 979326277]
+📧 Gmail: [waldirmendozahuaman887@gmail.com](mailto:waldirmendozahuaman887@gmail.com)  
+📱 Whatsapp: +51 979326277
 
 ## Author
 WALDIR MENDOZA HUAMÁN
