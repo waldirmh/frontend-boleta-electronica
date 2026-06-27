@@ -269,7 +269,7 @@ export default function Reporte() {
                                         <td className="text-center">S/ {Number(item.saleprice ?? 0).toFixed(2)}</td>
                                         <td className="text-center">
                                             <div className="content-action d-flex justify-content-center align-items-center">
-                                                <button className="btn btn-sm btn-pdf" type="button" onClick={() => handleDownloadPdf(item)}>
+                                                <button className="btn btn-sm btn-pdf" type="button" onClick={() => handleDownloadPdf(item)} aria-label={`Descargar PDF de comprobante ${item.number}`}>
                                                     <i className="bi bi-file-earmark-pdf-fill icon-pdf"></i>
                                                 </button>
                                                 <Popconfirm
@@ -277,10 +277,10 @@ export default function Reporte() {
                                                     description={`¿Está seguro de eliminar el comprobante Nro: ${item.number}?`}
                                                     onConfirm={() => handleDelete(item)}
                                                     onCancel={cancel}
-                                                    okText="Yes"
+                                                    okText="Sí"
                                                     cancelText="No"
                                                 >
-                                                    <button className="btn btn-sm btn-deleted" type="button">
+                                                    <button className="btn btn-sm btn-deleted" type="button" aria-label={`Eliminar comprobante ${item.number}`}>
                                                         <i className="bi bi-trash-fill icon-deleted"></i>
                                                     </button>
                                                 </Popconfirm>
@@ -296,8 +296,8 @@ export default function Reporte() {
                     breakLabel="..."
                     nextLabel=">"
                     onPageChange={handlePageClick}
-                    pageRangeDisplayed={0}
-                    marginPagesDisplayed={1}
+                    pageRangeDisplayed={3}
+                    marginPagesDisplayed={2}
                     pageCount={pages}
                     previousLabel="<"
                     containerClassName="pagination"
@@ -308,6 +308,7 @@ export default function Reporte() {
                     previousLinkClassName="previousLink"
                     nextLinkClassName="nextLink"
                     activeClassName="active"
+                    renderOnZeroPageCount={null}
                 />
             </div>
             {

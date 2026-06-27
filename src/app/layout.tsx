@@ -26,10 +26,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={inter.className}>
         <BootstrapClient />
         <div className="app d-flex flex-column">
-          <Header />
           <AuthProvider>
+            <Header />
             <Providers>
-              <main className="container col-12">{children}</main>
+              <main className="container">{children}</main>
               <ToastContainer />
             </Providers>
           </AuthProvider>

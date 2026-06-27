@@ -4,29 +4,10 @@ import Image from 'next/image';
 import './Home.css';
 import imageVenta from '@/assets/img/payment.png';
 import imageReporte from '@/assets/img/clock.png';
-import { useAuth } from "@/context/authContext";
 
 export default function Home() {
-
-
-    const { logout, errors } = useAuth();
-
-    const handleLogout = async () => {
-        await logout()
-    }
-
     return (
         <div className='container col-12 col-sm-12 col-md-12 col-lg-12'>
-            <div className="d-flex justify-content-start align-items-center mt-2">
-                <button
-                    onClick={handleLogout}
-                    className="btn btn-red btn-logut"
-                >
-                    SALIR
-                </button>
-
-            </div>
-
             <div className="container-home">
                 <Link href="/home/ventas" className="card-home-link">
                     <div className="card-home">

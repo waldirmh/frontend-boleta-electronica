@@ -9,6 +9,13 @@ import { useAuth } from "@/context/authContext";
 import { useRouter } from 'next/navigation';
 import "../styles/Signin.css"
 
+interface FieldErrors {
+  email: string;
+  password: string;
+}
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function Signin() {
 
   const { signin, errors, loading, isAuthenticated } = useAuth();
@@ -18,9 +25,56 @@ export default function Signin() {
     email: "",
     password: "",
   });
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({ email: "", password: "" });
+  const [touched, setTouched] = useState<{ email: boolean; password: boolean }>({ email: false, password: false });
 
+  const validateEmail = (value: string): string => {
+    if (!value.trim()) return "El correo es obligatorio";
+    if (!EMAIL_REGEX.test(value.trim())) return "Ingrese un correo válido";
+    return "";
+  };
+
+  const validatePassword = (value: string): string => {
+    if (!value) return "La contraseña es obligatoria";
+    if (value.length < 4) return "La contraseña debe tener al menos 4 caracteres";
+    return "";
+  };
+
+  const handleBlur = (field: keyof FieldErrors) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    if (field === "email") {
+      setFieldErrors((prev) => ({ ...prev, email: validateEmail(formData.email) }));
+    } else if (field === "password") {
+      setFieldErrors((prev) => ({ ...prev, password: validatePassword(formData.password) }));
+    }
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFormData((prev) => ({ ...prev, email: value }));
+    if (touched.email) {
+      setFieldErrors((prev) => ({ ...prev, email: validateEmail(value) }));
+    }
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFormData((prev) => ({ ...prev, password: value }));
+    if (touched.password) {
+      setFieldErrors((prev) => ({ ...prev, password: validatePassword(value) }));
+    }
+  };
+
+  const isFormValid = (): boolean => {
+    const emailErr = validateEmail(formData.email);
+    const passErr = validatePassword(formData.password);
+    setFieldErrors({ email: emailErr, password: passErr });
+    setTouched({ email: true, password: true });
+    return !emailErr && !passErr;
+  };
 
   const handleLogin = async () => {
+    if (!isFormValid()) return;
     setLoadingSpinner(true)
     try {
       const response = await signin(formData);
@@ -34,7 +88,6 @@ export default function Signin() {
     finally {
       setLoadingSpinner(false)
     }
-
   };
 
   useEffect(() => {
@@ -57,43 +110,53 @@ export default function Signin() {
         handleLogin();
       }
     };
-
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [formData]);
 
-
   return (
-    <div className="row align-items-center justify-content-center">
+    <div className="row align-items-center justify-content-center flex-grow-1">
       <div className="col-12 col-sm-10 col-md-6 col-lg-5">
         <div className="mt-2 mt-md-4 text-center">
           <h1 className='signin-title mb-1 mb-md-3'> INGRESAR</h1>
           <div className="card-body">
             <div className="form-group">
-              <label htmlFor="username" className="form-label form-label-signin">Usuario</label>
+              <label htmlFor="email" className="form-label form-label-signin">Usuario</label>
               <input
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={handleEmailChange}
+                onBlur={() => handleBlur("email")}
                 type="text"
                 name="email"
                 id="email"
                 placeholder="correo"
-                className="form-control form-control-signin"
+                className={`form-control form-control-signin ${touched.email && fieldErrors.email ? "is-invalid" : ""}`}
+                aria-invalid={touched.email && !!fieldErrors.email}
+                aria-describedby={fieldErrors.email ? "email-error" : undefined}
               />
+              {touched.email && fieldErrors.email && (
+                <div id="email-error" className="text-danger text-start small mt-1" role="alert">{fieldErrors.email}</div>
+              )}
             </div>
             <div className="form-group mt-4 mt-md-4 mb-3 mb-md-5">
               <label htmlFor="password" className="form-label form-label-signin">Contraseña</label>
               <input
                 value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                onChange={handlePasswordChange}
+                onBlur={() => handleBlur("password")}
                 type="password"
                 name="password"
                 id="password"
                 placeholder="******"
-                className="form-control form-control-signin"
+                className={`form-control form-control-signin ${touched.password && fieldErrors.password ? "is-invalid" : ""}`}
+                aria-invalid={touched.password && !!fieldErrors.password}
+                aria-describedby={fieldErrors.password ? "password-error" : undefined}
               />
+              {touched.password && fieldErrors.password && (
+                <div id="password-error" className="text-danger text-start small mt-1" role="alert">{fieldErrors.password}</div>
+              )}
             </div>
             <div className="d-grid gap-2">
               <button
